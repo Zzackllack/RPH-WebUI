@@ -35,7 +35,8 @@ $RECYCLE.BIN/
 # =============================================================================
 
 # Visual Studio Code
-.vscode/
+# Directory commited to git for extensions and settings
+# .vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
