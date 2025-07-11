@@ -13,9 +13,9 @@
   </parent>
 
   <groupId>com.zacklack</groupId>
-  <artifactId>zacklack</artifactId>
+  <artifactId>rph-backend</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>zacklack</name>
+  <name>rph-backend</name>
   <description>Resource-pack hosting backend</description>
 
   <properties>

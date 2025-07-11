@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ZacklackApplication {
+public class RphBackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ZacklackApplication.class, args);
+        SpringApplication.run(RphBackendApplication.class, args);
     }
 }
