@@ -5,7 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Formatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,10 +27,8 @@ public class ResourcePackService {
 
     private final ResourcePackRepository repository;
 
-    // e.g. "uploads"
     @Value("${file.upload-dir}")
     private String uploadDir;
-
     private Path uploadPath;
 
     public ResourcePackService(ResourcePackRepository repository) {
@@ -47,24 +49,46 @@ public class ResourcePackService {
 
     public ResourcePack findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ResourcePack not found with id " + id));
+            .orElseThrow(() -> new RuntimeException("ResourcePack not found: " + id));
     }
 
-    public ResourcePack store(MultipartFile file) throws IOException {
-        String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename != null && originalFilename.contains(".")
-                ? originalFilename.substring(originalFilename.lastIndexOf('.'))
-                : "";
-        String storageFilename = UUID.randomUUID().toString() + extension;
+    public String findHashById(Long id) {
+        ResourcePack rp = findById(id);
+        return rp.getFileHash();
+    }
 
-        Path targetLocation = uploadPath.resolve(storageFilename);
-        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+    public ResourcePack store(MultipartFile file) throws IOException, NoSuchAlgorithmException {
+        // compute hash
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        String hashHex;
+        try (DigestInputStream dis = new DigestInputStream(file.getInputStream(), digest)) {
+            // read to EOF to compute
+            while (dis.read() != -1) {}
+            byte[] hashBytes = digest.digest();
+            try (Formatter fmt = new Formatter()) {
+                for (byte b : hashBytes) {
+                    fmt.format("%02x", b);
+                }
+                hashHex = fmt.toString();
+            }
+        } catch (Exception e) {
+            throw new IOException("Failed to compute hash", e);
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String ext = originalFilename != null && originalFilename.contains(".")
+            ? originalFilename.substring(originalFilename.lastIndexOf('.'))
+            : "";
+        String storageFilename = UUID.randomUUID() + ext;
+        Path target = uploadPath.resolve(storageFilename);
+        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
 
         ResourcePack rp = new ResourcePack(
-                originalFilename,
-                storageFilename,
-                file.getSize(),
-                LocalDateTime.now()
+            originalFilename,
+            storageFilename,
+            file.getSize(),
+            hashHex,
+            LocalDateTime.now()
         );
         return repository.save(rp);
     }

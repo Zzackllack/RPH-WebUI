@@ -2,11 +2,17 @@ package com.zacklack.zacklack.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "resource_packs")
 public class ResourcePack {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,16 +27,29 @@ public class ResourcePack {
     @Column(nullable = false)
     private Long size; // in bytes
 
+    @Column(name="file_hash", nullable = false, length = 64)
+    private String fileHash; // SHA-256 hash hex
+
     @Column(name="upload_date", nullable = false)
     private LocalDateTime uploadDate;
 
     public ResourcePack() {}
 
-    public ResourcePack(String originalFilename, String storageFilename, Long size, LocalDateTime uploadDate) {
+    public ResourcePack(String originalFilename, String storageFilename, Long size, String fileHash, LocalDateTime uploadDate) {
         this.originalFilename = originalFilename;
         this.storageFilename = storageFilename;
         this.size = size;
+        this.fileHash = fileHash;
         this.uploadDate = uploadDate;
+    }
+
+    // getters/setters...
+    public String getFileHash() {
+        return fileHash;
+    }
+
+    public void setFileHash(String fileHash) {
+        this.fileHash = fileHash;
     }
 
     // --- Getters & Setters ---

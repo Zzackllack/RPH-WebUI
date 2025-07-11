@@ -57,4 +57,5 @@ export interface ApiResourcePack {
   storageFilename: string;
   size: number;           // bytes
   uploadDate: string;     // ISO date string
+  fileHash?: string;
 }
