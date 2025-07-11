@@ -1,6 +1,8 @@
 {
 	"recommendations": [
-		"biomejs.biome"
+		"biomejs.biome",
+		"vmware.vscode-boot-dev-pack",
+		"vscjava.vscode-java-pack"
 	],
 	"unwantedRecommendations": [
 		"esbenp.prettier-vscode",
