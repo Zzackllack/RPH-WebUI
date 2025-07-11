@@ -1,0 +1,10 @@
+# Authentication credentials for demo
+NEXT_PUBLIC_DEMO_USERNAME=admin
+NEXT_PUBLIC_DEMO_PASSWORD=minecraft123
+
+# App configuration
+NEXT_PUBLIC_APP_NAME=RPH WebUI
+NEXT_PUBLIC_APP_DESCRIPTION=Minecraft Resource Pack Hosting Platform
+
+# API configuration
+NEXT_PUBLIC_API_URL=http://localhost:8080
