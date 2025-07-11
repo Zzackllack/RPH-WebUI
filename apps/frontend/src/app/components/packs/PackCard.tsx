@@ -107,29 +107,33 @@ export function PackCard({ pack, onDelete }: PackCardProps) {
       </div>
 
       {/* Actions */}
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         <motion.a
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${pack.storageFilename}`}
-          className="minecraft-button w-full py-3 text-sm font-semibold flex items-center justify-center space-x-2"
+          className="w-full py-3 px-4 text-sm font-semibold flex items-center justify-center space-x-2 rounded-2xl minecraft-button"
           download
         >
           <Download className="w-4 h-4" />
           <span>Download</span>
         </motion.a>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleDelete}
-          disabled={deleting}
-          className="w-full py-3 px-4 bg-red-600/90 hover:bg-red-700 text-white rounded-2xl text-sm font-medium flex items-center justify-center space-x-2 border border-red-700/40 transition-all duration-200 mt-1 shadow-md shadow-red-500/10"
-        >
-          <Trash2 className="w-4 h-4" />
-          <span>{deleting ? 'Deleting...' : 'Delete'}</span>
-        </motion.button>
-        
+        <div className="relative w-full">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleDelete}
+            disabled={deleting}
+            className="w-full py-3 px-4 bg-red-600/90 hover:bg-red-700 text-white rounded-2xl text-sm font-medium flex items-center justify-center space-x-2 border border-red-700/40 transition-all duration-200 shadow-md shadow-red-500/10 z-10 relative group/delete-btn"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>{deleting ? 'Deleting...' : 'Delete'}</span>
+          </motion.button>
+          {/* Glow effect only on hover of the delete button */}
+          <div className="pointer-events-none absolute -inset-1 bg-gradient-to-r from-red-500 to-red-700 rounded-2xl blur opacity-0 group-hover/delete-btn:opacity-40 transition-opacity z-0"></div>
+        </div>
+
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
