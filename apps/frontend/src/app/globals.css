@@ -1,49 +1,154 @@
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-@import "tailwindcss";
+@import "tailwindcss/preflight";
+@tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --background: #795548;
-  --foreground: #ffffff;
-  --color-background: #795548;
-  --color-foreground: #ffffff;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --minecraft-primary: #3B8526;
+  --minecraft-secondary: #825432;
+  --minecraft-accent: #8B4513;
+  --minecraft-grass: #7CB342;
+  --minecraft-stone: #808080;
+  --minecraft-dirt: #8B4513;
+  --minecraft-wood: #DEB887;
+  --minecraft-dark: #2C2C2C;
+  --minecraft-light: #F5F5DC;
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #5d4037;
-    --foreground: #ffffff;
-    --color-background: #5d4037;
-    --color-foreground: #ffffff;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 106 50% 34%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 28 44% 35%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 28 44% 35%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 106 50% 34%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 17%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 17%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 17%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 106 50% 34%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 28 44% 35%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 22%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 28 44% 35%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 22%;
+    --input: 0 0% 22%;
+    --ring: 106 50% 34%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
 }
 
-/* Minecraft-style pixelated borders */
-.minecraft-border {
-  border: 4px solid;
-  border-color: #333 #666 #666 #333;
-  image-rendering: pixelated;
+.minecraft-button {
+  @apply relative overflow-hidden bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg transform transition-all duration-150 hover:scale-105 hover:shadow-xl;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 
-/* Block-style button animation */
-.block-shadow {
-  box-shadow:
-    inset -2px -2px 0px rgba(0, 0, 0, 0.3),
-    inset 2px 2px 0px rgba(255, 255, 255, 0.3),
-    2px 2px 4px rgba(0, 0, 0, 0.5);
+.minecraft-button:active {
+  @apply transform scale-95;
 }
 
-.block-shadow:active {
-  box-shadow:
-    inset 2px 2px 0px rgba(0, 0, 0, 0.3),
-    inset -2px -2px 0px rgba(255, 255, 255, 0.3);
-  transform: translate(1px, 1px);
+.minecraft-card {
+  @apply bg-white/80 backdrop-blur-md border border-gray-200/50 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.minecraft-grid {
+  background-image: 
+    linear-gradient(rgba(59, 133, 38, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 133, 38, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.glass-effect {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.glow-effect {
+  box-shadow: 
+    0 0 20px rgba(59, 133, 38, 0.3),
+    0 0 40px rgba(59, 133, 38, 0.1),
+    0 0 80px rgba(59, 133, 38, 0.05);
+}
+
+.text-glow {
+  text-shadow: 
+    0 0 10px rgba(59, 133, 38, 0.5),
+    0 0 20px rgba(59, 133, 38, 0.3),
+    0 0 30px rgba(59, 133, 38, 0.1);
+}
+
+.pixel-border {
+  box-shadow: 
+    0 0 0 2px #3B8526,
+    2px 2px 0 2px #2E6B1F,
+    -2px -2px 0 2px #4A9B2F;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(59, 133, 38, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(59, 133, 38, 0.6); }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
