@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Eye, EyeOff, Mail, User, Lock } from 'lucide-react';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useToast } from '@/app/contexts/ToastContext';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Eye, EyeOff, Lock, User, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -12,44 +12,32 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
     password: '',
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  
-  const { login, register, isLoading } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const { login, isLoading } = useAuth();
   const { addToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors({});
-
-    try {
-      if (isLogin) {
-        await login(formData.email, formData.password);
-        addToast({
-          type: 'success',
-          title: 'Welcome back!',
-          message: 'You have been successfully logged in.',
-        });
-      } else {
-        await register(formData.username, formData.email, formData.password);
-        addToast({
-          type: 'success',
-          title: 'Account created!',
-          message: 'Your account has been created successfully.',
-        });
-      }
+    setError(null);
+    const success = await login(formData.username, formData.password);
+    if (success) {
+      addToast({
+        type: 'success',
+        title: 'Welcome!',
+        message: 'You have been successfully logged in.',
+      });
       onClose();
-    } catch (error) {
+    } else {
+      setError('Invalid username or password.');
       addToast({
         type: 'error',
         title: 'Authentication failed',
-        message: error instanceof Error ? error.message : 'An error occurred',
+        message: 'Invalid username or password.',
       });
     }
   };
@@ -57,9 +45,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
+    if (error) setError(null);
   };
 
   if (!isOpen) return null;
@@ -82,7 +68,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
-              {isLogin ? 'Welcome Back' : 'Join CraftPacks'}
+              Login to RPH-WebUI
             </h2>
             <button
               onClick={onClose}
@@ -93,46 +79,23 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                  Username
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    id="username"
-                    name="username"
-                    type="text"
-                    required={!isLogin}
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-                    placeholder="Enter your username"
-                  />
-                </div>
-                {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
-              </div>
-            )}
-
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                Username
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
+                  id="username"
+                  name="username"
+                  type="text"
                   required
-                  value={formData.email}
+                  value={formData.username}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                 />
               </div>
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
             <div>
@@ -159,29 +122,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
+
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full minecraft-button disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-green-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
+              {isLoading ? 'Please wait...' : 'Sign In'}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              {isLogin ? "Don't have an account?" : "Already have an account?"}
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="ml-2 text-green-600 hover:text-green-700 font-medium"
-              >
-                {isLogin ? 'Sign up' : 'Sign in'}
-              </button>
-            </p>
-          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

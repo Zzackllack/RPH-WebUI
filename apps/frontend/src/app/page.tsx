@@ -1,13 +1,8 @@
 'use client';
 
-import { DashboardLayout } from '@/app/components/dashboard/DashboardLayout';
-import { PacksManagement } from '@/app/components/dashboard/PacksManagement';
-import { StatsCards } from '@/app/components/dashboard/StatsCards';
+import { LoginPage } from '@/app/components/auth/LoginPage';
 import { UploadSection } from '@/app/components/dashboard/UploadSection';
-import { HeroSection } from '@/app/components/home/HeroSection';
-import { RestrictedAccess } from '@/app/components/home/RestrictedAccess';
-import { Footer } from '@/app/components/layout/Footer';
-import { Header } from '@/app/components/layout/Header';
+import { PacksList } from '@/app/components/packs/PacksList';
 import { useAuth } from '@/app/contexts/AuthContext';
 
 export default function Home() {
@@ -24,22 +19,13 @@ export default function Home() {
     );
   }
 
-  if (isAuthenticated) {
-    return (
-      <DashboardLayout>
-        <StatsCards />
-        <UploadSection />
-        <PacksManagement />
-      </DashboardLayout>
-    );
+  if (!isAuthenticated) {
+    return <LoginPage />;
   }
-
   return (
-    <div className="min-h-screen">
-      <Header />
-      <HeroSection />
-      <RestrictedAccess />
-      <Footer />
-    </div>
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100">
+      <UploadSection />
+      <PacksList />
+    </main>
   );
 }

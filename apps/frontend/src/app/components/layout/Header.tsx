@@ -28,24 +28,8 @@ export function Header() {
             <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center pixel-border">
               <Package className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">CraftPacks</span>
+            <span className="text-xl font-bold text-gray-900">RPH-WebUI</span>
           </motion.div>
-
-          {/* Navigation - Desktop */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-colors">
-              Browse
-            </a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-colors">
-              Categories
-            </a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-colors">
-              Featured
-            </a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-colors">
-              Community
-            </a>
-          </nav>
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
@@ -56,7 +40,7 @@ export function Header() {
                   className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <img
-                    src={user?.avatar || 'https://images.pexels.com/photos/2007647/pexels-photo-2007647.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&dpr=1'}
+                    src={'https://images.pexels.com/photos/2007647/pexels-photo-2007647.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&dpr=1'}
                     alt="Profile"
                     className="w-8 h-8 rounded-full"
                   />
@@ -127,16 +111,10 @@ export function Header() {
             >
               <div className="flex flex-col space-y-2">
                 <a href="#" className="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">
-                  Browse
+                  Packs
                 </a>
                 <a href="#" className="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">
-                  Categories
-                </a>
-                <a href="#" className="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">
-                  Featured
-                </a>
-                <a href="#" className="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">
-                  Community
+                  Upload
                 </a>
               </div>
             </motion.nav>

@@ -18,40 +18,28 @@ export function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center pixel-border">
                 <Package className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold">CraftPacks</span>
+              <span className="text-xl font-bold">RPH-WebUI</span>
             </motion.div>
             <p className="text-gray-400 max-w-md">
-              The ultimate destination for Minecraft resource packs. Upload, share, and discover 
-              amazing texture packs created by the community.
+              Minimal, modern resource pack hosting for Minecraft. Upload and manage your packs with ease.
             </p>
           </div>
 
           {/* Links */}
+          {/* Minimal links, no community/support */}
           <div>
-            <h3 className="font-semibold mb-4">Platform</h3>
+            <h3 className="font-semibold mb-4">RPH-WebUI</h3>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Browse Packs</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Upload Pack</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Categories</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Featured</a></li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h3 className="font-semibold mb-4">Support</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Guidelines</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Home</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Upload</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Packs</a></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 CraftPacks. All rights reserved.
+            © 2025 RPH-WebUI. All rights reserved.
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white transition-colors">
