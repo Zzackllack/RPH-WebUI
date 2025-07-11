@@ -10,5 +10,6 @@
   "eslint.validate": [],
   "extensions.ignoreRecommendations": false,
   "prettier.enable": false,
-  "prettier.requireConfig": false
+  "prettier.requireConfig": false,
+  "java.configuration.updateBuildConfiguration": "automatic"
 }
