@@ -111,4 +111,25 @@ public class ResourcePackService {
         logger.info("[UPLOAD] ResourcePack saved to DB: id={}, originalFilename={}, storageFilename={}", saved.getId(), saved.getOriginalFilename(), saved.getStorageFilename());
         return saved;
     }
+
+    /**
+     * Delete a resource pack by ID, removing both the DB entry and the file from disk.
+     * @param id ResourcePack ID
+     */
+    public void delete(Long id) {
+        ResourcePack rp = findById(id);
+        // Remove file from disk
+        if (rp.getStorageFilename() != null && !rp.getStorageFilename().isEmpty()) {
+            Path filePath = uploadPath.resolve(rp.getStorageFilename());
+            try {
+                Files.deleteIfExists(filePath);
+                logger.info("[DELETE] Deleted file from disk: {}", filePath);
+            } catch (IOException e) {
+                logger.warn("[DELETE] Failed to delete file from disk: {}: {}", filePath, e.getMessage());
+            }
+        }
+        // Remove DB entry
+        repository.deleteById(id);
+        logger.info("[DELETE] Deleted ResourcePack from DB: id={}", id);
+    }
 }

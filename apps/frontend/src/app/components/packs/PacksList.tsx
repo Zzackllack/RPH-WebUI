@@ -2,11 +2,11 @@
 
 import { ApiResourcePack } from '@/app/types';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Calendar, Download, FileArchive, HardDrive, Hash, X } from 'lucide-react';
+import { Calendar, Download, FileArchive, HardDrive, Hash, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ZipLogo } from '../ui/ZipLogo';
 
-export function PacksList() {
+function PacksList() {
   const [packs, setPacks] = useState<ApiResourcePack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +23,10 @@ export function PacksList() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  const handleDelete = (id: number) => {
+    setPacks(prev => prev.filter(p => p.id !== id));
+  };
 
   if (loading) {
     return (
@@ -101,7 +105,7 @@ export function PacksList() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <PackCard pack={pack} />
+            <PackCard pack={pack} onDelete={handleDelete} />
           </motion.div>
         ))}
       </div>
@@ -109,11 +113,12 @@ export function PacksList() {
   );
 }
 
-function PackCard({ pack }: { pack: ApiResourcePack }) {
+function PackCard({ pack, onDelete }: { pack: ApiResourcePack, onDelete: (id: number) => void }) {
   const [hash, setHash] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [hashLoading, setHashLoading] = useState(false);
   const [hashError, setHashError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const showHash = () => {
     setHashLoading(true);
@@ -132,6 +137,22 @@ function PackCard({ pack }: { pack: ApiResourcePack }) {
         setModalOpen(true);
       })
       .finally(() => setHashLoading(false));
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this resource pack? This action cannot be undone.')) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks/${pack.id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok && res.status !== 204) throw new Error(`Failed to delete (HTTP ${res.status})`);
+      onDelete(pack.id);
+    } catch (err) {
+      alert('Failed to delete resource pack.');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const formatFileSize = (bytes: number) => {
@@ -199,6 +220,17 @@ function PackCard({ pack }: { pack: ApiResourcePack }) {
           <Download className="w-4 h-4" />
           <span>Download</span>
         </motion.a>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleDelete}
+          disabled={deleting}
+          className="w-full py-3 px-4 bg-red-600/90 hover:bg-red-700 text-white rounded-2xl text-sm font-medium flex items-center justify-center space-x-2 border border-red-700/40 transition-all duration-200 mt-1 shadow-md shadow-red-500/10"
+        >
+          <Trash2 className="w-4 h-4" />
+          <span>{deleting ? 'Deleting...' : 'Delete'}</span>
+        </motion.button>
         
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -280,3 +312,5 @@ function PackCard({ pack }: { pack: ApiResourcePack }) {
     </motion.div>
   );
 }
+
+export default PacksList;

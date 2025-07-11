@@ -2,7 +2,7 @@
 
 import { LoginPage } from '@/app/components/auth/LoginPage';
 import { UploadSection } from '@/app/components/dashboard/UploadSection';
-import { PacksList } from '@/app/components/packs/PacksList';
+import PacksList from '@/app/components/packs/PacksList';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { motion } from 'framer-motion';
 
