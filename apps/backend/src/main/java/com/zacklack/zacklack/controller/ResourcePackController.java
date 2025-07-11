@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import com.zacklack.zacklack.service.ResourcePackService;
 @RequestMapping("/api/resourcepacks")
 public class ResourcePackController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ResourcePackController.class);
     private final ResourcePackService service;
 
     public ResourcePackController(ResourcePackService service) {
@@ -50,10 +53,17 @@ public class ResourcePackController {
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ResourcePack> uploadPack(@RequestParam("file") MultipartFile file) throws NoSuchAlgorithmException {
+        logger.info("[UPLOAD] Received upload request: filename={}, size={} bytes, contentType={}",
+            file.getOriginalFilename(), file.getSize(), file.getContentType());
         try {
             ResourcePack saved = service.store(file);
+            logger.info("[UPLOAD] Successfully stored file: {} ({} bytes)", file.getOriginalFilename(), file.getSize());
             return ResponseEntity.status(201).body(saved);
         } catch (IOException e) {
+            logger.error("[UPLOAD] IOException while storing file: {}: {}", file.getOriginalFilename(), e.getMessage(), e);
+            return ResponseEntity.status(500).build();
+        } catch (Exception e) {
+            logger.error("[UPLOAD] Unexpected error: {}", e.getMessage(), e);
             return ResponseEntity.status(500).build();
         }
     }
