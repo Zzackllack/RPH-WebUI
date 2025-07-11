@@ -139,6 +139,7 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+apps/backend/src/main/resources/application.properties
 
 # Gradle (Java/Kotlin)
 .gradle/
