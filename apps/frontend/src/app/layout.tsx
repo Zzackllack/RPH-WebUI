@@ -1,5 +1,6 @@
 import { AuthProvider } from '@/app/contexts/AuthContext';
 import { ToastProvider } from '@/app/contexts/ToastContext';
+import 'antd/dist/reset.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';

@@ -4,64 +4,7 @@ import type { FilterOptions, ResourcePack } from '@/app/types';
 import { format } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Edit, Filter, Grid, List, Search, Star, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
-
-const mockPacks: ResourcePack[] = [
-  {
-    id: '1',
-    name: 'Faithful 32x',
-    description: 'A high-resolution texture pack that maintains the original look of Minecraft',
-    version: '1.0.0',
-    mcVersion: ['1.20', '1.19'],
-    author: 'crafter123',
-    tags: ['faithful', 'high-res', 'vanilla'],
-    downloads: 15423,
-    rating: 4.8,
-    size: '24.5 MB',
-    thumbnail: 'https://images.pexels.com/photos/1576190/pexels-photo-1576190.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&dpr=1',
-    file: 'faithful-32x.zip',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-20'),
-    featured: true,
-    verified: true,
-  },
-  {
-    id: '2',
-    name: 'Modern HD',
-    description: 'Contemporary textures with photorealistic details',
-    version: '2.1.0',
-    mcVersion: ['1.20'],
-    author: 'crafter123',
-    tags: ['modern', 'hd', 'realistic'],
-    downloads: 8901,
-    rating: 4.6,
-    size: '48.2 MB',
-    thumbnail: 'https://images.pexels.com/photos/1576190/pexels-photo-1576190.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&dpr=1',
-    file: 'modern-hd.zip',
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-02-05'),
-    featured: false,
-    verified: true,
-  },
-  {
-    id: '3',
-    name: 'Medieval Fantasy',
-    description: 'Transport your world to the medieval times',
-    version: '1.5.0',
-    mcVersion: ['1.20', '1.19', '1.18'],
-    author: 'crafter123',
-    tags: ['medieval', 'fantasy', 'atmosphere'],
-    downloads: 12567,
-    rating: 4.9,
-    size: '35.8 MB',
-    thumbnail: 'https://images.pexels.com/photos/1576190/pexels-photo-1576190.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&dpr=1',
-    file: 'medieval-fantasy.zip',
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-25'),
-    featured: true,
-    verified: true,
-  },
-];
+import { useEffect, useMemo, useState } from 'react';
 
 export function PacksManagement() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -72,9 +15,30 @@ export function PacksManagement() {
     sortBy: 'downloads',
     verified: false,
   });
+  const [packs, setPacks] = useState<ResourcePack[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let ignore = false;
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks`)
+      .then(res => res.json())
+      .then((data: ResourcePack[]) => {
+        if (!ignore) setPacks(data);
+      })
+      .catch(() => {
+        if (!ignore) setPacks([]);
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const filteredPacks = useMemo(() => {
-    let filtered = mockPacks;
+    let filtered = packs;
 
     if (filters.search) {
       filtered = filtered.filter(pack =>
@@ -99,24 +63,23 @@ export function PacksManagement() {
       filtered = filtered.filter(pack => pack.verified);
     }
 
-    // Sort packs
-    filtered.sort((a, b) => {
+    filtered = [...filtered].sort((a, b) => {
       switch (filters.sortBy) {
         case 'downloads':
           return b.downloads - a.downloads;
         case 'rating':
           return b.rating - a.rating;
         case 'newest':
-          return b.createdAt.getTime() - a.createdAt.getTime();
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         case 'oldest':
-          return a.createdAt.getTime() - b.createdAt.getTime();
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         default:
           return 0;
       }
     });
 
     return filtered;
-  }, [filters]);
+  }, [filters, packs]);
 
   const PackCard = ({ pack }: { pack: ResourcePack }) => (
     <motion.div
@@ -133,7 +96,6 @@ export function PacksManagement() {
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
         />
       </div>
-      
       <div className="flex items-start justify-between mb-3">
         <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
           {pack.name}
@@ -142,11 +104,9 @@ export function PacksManagement() {
           <Star className="w-5 h-5 text-yellow-500 fill-current" />
         )}
       </div>
-      
       <p className="text-sm text-gray-600 mb-3 line-clamp-2">
         {pack.description}
       </p>
-      
       <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
         <span>{pack.downloads.toLocaleString()} downloads</span>
         <span className="flex items-center gap-1">
@@ -154,7 +114,6 @@ export function PacksManagement() {
           {pack.rating}
         </span>
       </div>
-      
       <div className="flex flex-wrap gap-1 mb-4">
         {pack.tags.slice(0, 3).map(tag => (
           <span
@@ -165,10 +124,9 @@ export function PacksManagement() {
           </span>
         ))}
       </div>
-      
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-500">
-          {format(pack.updatedAt, 'MMM d, yyyy')}
+          {format(new Date(pack.updatedAt), 'MMM d, yyyy')}
         </span>
         <div className="flex items-center gap-2">
           <button className="p-2 text-gray-400 hover:text-green-600 transition-colors">
@@ -195,7 +153,6 @@ export function PacksManagement() {
         alt={pack.name}
         className="w-16 h-16 rounded-lg object-cover"
       />
-      
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
           <h3 className="font-semibold text-gray-900">{pack.name}</h3>
@@ -213,7 +170,6 @@ export function PacksManagement() {
           <span>{pack.size}</span>
         </div>
       </div>
-      
       <div className="flex items-center gap-2">
         <button className="p-2 text-gray-400 hover:text-green-600 transition-colors">
           <Edit className="w-4 h-4" />
@@ -266,7 +222,6 @@ export function PacksManagement() {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           />
         </div>
-        
         <select
           value={filters.sortBy}
           onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as FilterOptions['sortBy'] }))}
@@ -277,7 +232,6 @@ export function PacksManagement() {
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>
         </select>
-        
         <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
           <Filter className="w-4 h-4" />
           Filters
@@ -285,35 +239,39 @@ export function PacksManagement() {
       </div>
 
       {/* Pack Grid/List */}
-      <AnimatePresence mode="wait">
-        {viewMode === 'grid' ? (
-          <motion.div
-            key="grid"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {filteredPacks.map(pack => (
-              <PackCard key={pack.id} pack={pack} />
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="list"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-4"
-          >
-            {filteredPacks.map(pack => (
-              <PackRow key={pack.id} pack={pack} />
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {loading ? (
+        <div className="text-center py-12 text-gray-500">Loading...</div>
+      ) : (
+        <AnimatePresence mode="wait">
+          {viewMode === 'grid' ? (
+            <motion.div
+              key="grid"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {filteredPacks.map(pack => (
+                <PackCard key={pack.id} pack={pack} />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="list"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-4"
+            >
+              {filteredPacks.map(pack => (
+                <PackRow key={pack.id} pack={pack} />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
 
-      {filteredPacks.length === 0 && (
+      {!loading && filteredPacks.length === 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

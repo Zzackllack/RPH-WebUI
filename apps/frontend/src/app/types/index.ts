@@ -47,3 +47,14 @@ export interface Stats {
   activeUsers: number;
   packCount: number;
 }
+
+/**
+ * The shape returned by GET /api/resourcepacks
+ */
+export interface ApiResourcePack {
+  id: number;
+  originalFilename: string;
+  storageFilename: string;
+  size: number;           // bytes
+  uploadDate: string;     // ISO date string
+}
