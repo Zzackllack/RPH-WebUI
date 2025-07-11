@@ -119,7 +119,7 @@ export function Header() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.2, ease: "easeOut" }}
-                      className="absolute right-0 mt-3 w-56 minecraft-card p-2 space-y-1"
+                      className="absolute right-0 mt-3 top-full w-56 minecraft-card p-2 space-y-1"
                     >
                       <motion.a
                         whileHover={{ scale: 1.02, x: 4 }}
