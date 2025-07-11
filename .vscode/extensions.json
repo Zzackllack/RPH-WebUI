@@ -1,12 +1,9 @@
 {
-	"recommendations": [
-		"biomejs.biome",
-		"vmware.vscode-boot-dev-pack",
-		"vscjava.vscode-java-pack"
-	],
-	"unwantedRecommendations": [
-		"esbenp.prettier-vscode",
-		"dbaeumer.vscode-eslint",
-		"rvest.vs-code-prettier-eslint"
-	]
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "vmware.vscode-boot-dev-pack",
+    "vscjava.vscode-java-pack"
+  ],
+  "unwantedRecommendations": ["biomejs.biome"]
 }

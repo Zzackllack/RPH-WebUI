@@ -1,5 +1,13 @@
 {
-	"devDependencies": {
-		"@biomejs/biome": "2.1.1"
-	}
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "eslint-config-wesbos": "^4.3.2",
+    "framer-motion": "^12.23.3",
+    "lucide-react": "^0.525.0",
+    "react-dropzone": "^14.3.8"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "3.6.2"
+  }
 }
