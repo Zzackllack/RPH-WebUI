@@ -56,35 +56,39 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-strong overflow-y-auto animate-fade-in"
+        style={{ minHeight: '100vh' }}
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.92, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6"
+          exit={{ opacity: 0, scale: 0.92, y: 30 }}
+          transition={{ duration: 0.35, type: 'spring', bounce: 0.25 }}
+          className="minecraft-card glass-effect glow-effect w-full max-w-md p-8 relative animate-fade-in-scale max-h-[90vh] overflow-y-auto"
+          style={{ boxSizing: 'border-box' }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary via-emerald-600 to-green-600 bg-clip-text text-transparent text-glow">
               Login to RPH-WebUI
             </h2>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-full hover:bg-primary/10 focus-ring transition-colors focus:outline-none"
+              aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-primary" />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="username" className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-primary w-5 h-5" />
                 <input
                   id="username"
                   name="username"
@@ -92,18 +96,19 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   required
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                  className="minecraft-input pl-10 pr-4 py-3 focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors"
                   placeholder="Enter your username"
+                  autoComplete="username"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-primary w-5 h-5" />
                 <input
                   id="password"
                   name="password"
@@ -111,25 +116,28 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                  className="minecraft-input pl-10 pr-12 py-3 focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors"
                   placeholder="Enter your password"
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/70 hover:text-primary focus:outline-none"
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
             </div>
 
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {error && <p className="text-red-500 text-sm mt-1 animate-bounce-subtle">{error}</p>}
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-green-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="minecraft-button w-full py-3 text-lg font-bold shadow-lg pulse-glow transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Please wait...' : 'Sign In'}
             </button>

@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @import "tailwindcss";
-
 
 :root {
   --minecraft-primary: #3B8526;
@@ -13,6 +13,9 @@
   --minecraft-wood: #DEB887;
   --minecraft-dark: #2C2C2C;
   --minecraft-light: #F5F5DC;
+  --minecraft-emerald: #00D084;
+  --minecraft-diamond: #8CFFFF;
+  --minecraft-gold: #FFAA00;
 }
 
 @layer base {
@@ -82,7 +85,135 @@
   }
 }
 
-/* .minecraft-button styles removed for Tailwind v4 compatibility. Use utility classes in JSX instead. */
+/* Modern Minecraft-themed components */
+.minecraft-button {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease-out;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border: 2px solid hsl(var(--primary) / 0.2);
+}
+
+.minecraft-button:hover {
+  box-shadow: 0 25px 25px -5px hsl(var(--primary) / 0.25), 0 25px 50px -12px hsl(var(--primary) / 0.25);
+  transform: scale(1.05);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+.minecraft-button:active {
+  transform: scale(0.95);
+}
+
+.minecraft-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.minecraft-button:hover::before {
+  opacity: 1;
+}
+
+.minecraft-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  backdrop-filter: blur(20px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+  transition: all 0.5s ease-out;
+}
+
+.dark .minecraft-card {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(17, 24, 39, 0.7));
+  border-color: rgba(55, 65, 81, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+}
+
+.minecraft-card:hover {
+  box-shadow: 0 25px 50px -12px hsl(var(--primary) / 0.1);
+  transform: scale(1.02) translateY(-2px);
+}
+
+.dark .minecraft-card:hover {
+  box-shadow: 0 25px 50px -12px hsl(var(--primary) / 0.05);
+}
+
+.minecraft-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.05), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.minecraft-card:hover::before {
+  opacity: 1;
+}
+
+.glass-effect {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  backdrop-filter: blur(20px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-effect {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.6));
+  border-color: rgba(55, 65, 81, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+}
+
+.glass-effect::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+  pointer-events: none;
+}
+
+.minecraft-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  border: 2px solid rgba(156, 163, 175, 0.5);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease-out;
+  color: rgb(17, 24, 39);
+}
+
+.dark .minecraft-input {
+  border-color: rgba(55, 65, 81, 0.5);
+  background: rgba(17, 24, 39, 0.8);
+  color: rgb(243, 244, 246);
+}
+
+.minecraft-input:focus {
+  border-color: hsl(var(--primary) / 0.6);
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.2);
+  outline: none;
+}
+
+.minecraft-input::placeholder {
+  color: rgb(156, 163, 175);
+}
+
+.dark .minecraft-input::placeholder {
+  color: rgb(107, 114, 128);
+}
 
 
 
@@ -92,8 +223,6 @@
     linear-gradient(90deg, rgba(59, 133, 38, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
-
-/* .glass-effect styles removed for Tailwind v4 compatibility. Use utility classes in JSX instead. */
 
 .glow-effect {
   box-shadow: 
@@ -116,6 +245,7 @@
     -2px -2px 0 2px #4A9B2F;
 }
 
+/* Modern animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -132,4 +262,152 @@
 
 .pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.8);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  border: 3px solid rgba(59, 133, 38, 0.1);
+  border-top: 3px solid hsl(var(--primary));
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modern gradient backgrounds */
+.gradient-bg-primary {
+  background: linear-gradient(135deg, 
+    hsl(var(--primary)) 0%, 
+    hsl(var(--primary) / 0.8) 50%, 
+    hsl(var(--secondary)) 100%);
+}
+
+.gradient-bg-surface {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(255, 255, 255, 0.8) 50%, 
+    rgba(249, 250, 251, 0.9) 100%);
+}
+
+.dark .gradient-bg-surface {
+  background: linear-gradient(135deg, 
+    rgba(17, 24, 39, 0.95) 0%, 
+    rgba(17, 24, 39, 0.8) 50%, 
+    rgba(31, 41, 55, 0.9) 100%);
+}
+
+/* Enhanced focus states */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
+}
+
+/* Backdrop blur utilities */
+.backdrop-blur-strong {
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+.backdrop-blur-medium {
+  backdrop-filter: blur(12px) saturate(150%);
+}
+
+.backdrop-blur-light {
+  backdrop-filter: blur(6px) saturate(120%);
 }

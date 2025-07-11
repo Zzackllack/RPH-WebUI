@@ -1,5 +1,9 @@
+import { Header } from '@/app/components/layout/Header';
 import { AuthProvider } from '@/app/contexts/AuthContext';
+import { ThemeProvider } from '@/app/contexts/ThemeContext';
 import { ToastProvider } from '@/app/contexts/ToastContext';
+import { Footer } from './components/layout/Footer';
+
 import 'antd/dist/reset.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -27,11 +31,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.className} antialiased`}>
-        <AuthProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <Header />
+              {children}
+              <Footer />
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
