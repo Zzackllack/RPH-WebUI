@@ -1,18 +1,17 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/app/contexts/AuthContext';
-import { motion } from 'framer-motion';
+import { useAuth } from "@/app/contexts/AuthContext";
+import { motion } from "framer-motion";
 
 export function HeroSection() {
   useAuth();
-
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 minecraft-grid opacity-30" />
       <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-white to-green-50" />
-      
+
       {/* Floating Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {Array.from({ length: 8 }).map((_, i) => (

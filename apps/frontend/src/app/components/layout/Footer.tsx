@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { Code, Github, Heart, Twitter } from 'lucide-react';
-import { MinecraftLogo } from '../ui/MinecraftLogo';
+import { motion } from "framer-motion";
+import { Code, Github, Heart, Twitter } from "lucide-react";
+import { MinecraftLogo } from "../ui/MinecraftLogo";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -11,7 +11,7 @@ export function Footer() {
     <footer className="relative backdrop-blur-strong bg-white/80 dark:bg-gray-900/80 border-t border-white/20 dark:border-gray-800/50">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-gray-50/50 to-transparent dark:from-gray-900/50 pointer-events-none"></div>
-      
+
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
           {/* Logo & Description */}
@@ -33,15 +33,16 @@ export function Footer() {
                 </p>
               </div>
             </motion.div>
-            
+
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="text-gray-600 dark:text-gray-300 max-w-md leading-relaxed mb-6"
             >
-              Modern, secure resource pack hosting for Minecraft. Upload, manage, and share your 
-              texture packs or implement them into your Server. Built with love for the Minecraft ecosystem.
+              Modern, secure resource pack hosting for Minecraft. Upload,
+              manage, and share your texture packs or implement them into your
+              Server. Built with love for the Minecraft ecosystem.
             </motion.p>
 
             <motion.div
@@ -123,7 +124,7 @@ export function Footer() {
           <p className="text-gray-500 dark:text-gray-400 text-sm">
             © {currentYear} RPH-WebUI. Crafted for the Minecraft community.
           </p>
-          
+
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
             <motion.a
               whileHover={{ scale: 1.1, y: -2 }}

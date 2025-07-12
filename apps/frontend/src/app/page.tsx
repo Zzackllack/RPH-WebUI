@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { LoginPage } from '@/app/components/auth/LoginPage';
-import { UploadSection } from '@/app/components/dashboard/UploadSection';
-import PacksList from '@/app/components/packs/PacksList';
-import { useAuth } from '@/app/contexts/AuthContext';
-import { motion } from 'framer-motion';
+import { LoginPage } from "@/app/components/auth/LoginPage";
+import { UploadSection } from "@/app/components/dashboard/UploadSection";
+import PacksList from "@/app/components/packs/PacksList";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -46,10 +46,10 @@ export default function Home() {
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-400/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-green-500/5 rounded-full blur-3xl animate-pulse delay-500"></div>
-        
+
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 minecraft-grid opacity-30"></div>
-        
+
         {/* Floating particles */}
         <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-primary/20 rounded-full animate-bounce-subtle"></div>
         <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-emerald-500/20 rounded-full animate-bounce-subtle delay-300"></div>
@@ -78,7 +78,7 @@ export default function Home() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed"
           >
-            Upload, manage, and share your Minecraft resource packs with ease. 
+            Upload, manage, and share your Minecraft resource packs with ease.
             Transform your Minecraft world with stunning textures and designs.
           </motion.p>
         </motion.div>

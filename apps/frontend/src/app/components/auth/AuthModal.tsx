@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/app/contexts/AuthContext';
-import { useToast } from '@/app/contexts/ToastContext';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Eye, EyeOff, Lock, User, X } from 'lucide-react';
-import { useState } from 'react';
+import { useAuth } from "@/app/contexts/AuthContext";
+import { useToast } from "@/app/contexts/ToastContext";
+import { AnimatePresence, motion } from "framer-motion";
+import { Eye, EyeOff, Lock, User, X } from "lucide-react";
+import { useState } from "react";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -14,8 +14,8 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
   const [error, setError] = useState<string | null>(null);
   const { login, isLoading } = useAuth();
@@ -27,24 +27,24 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const success = await login(formData.username, formData.password);
     if (success) {
       addToast({
-        type: 'success',
-        title: 'Welcome!',
-        message: 'You have been successfully logged in.',
+        type: "success",
+        title: "Welcome!",
+        message: "You have been successfully logged in.",
       });
       onClose();
     } else {
-      setError('Invalid username or password.');
+      setError("Invalid username or password.");
       addToast({
-        type: 'error',
-        title: 'Authentication failed',
-        message: 'Invalid username or password.',
+        type: "error",
+        title: "Authentication failed",
+        message: "Invalid username or password.",
       });
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (error) setError(null);
   };
 
@@ -57,16 +57,16 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-strong overflow-y-auto animate-fade-in"
-        style={{ minHeight: '100vh' }}
+        style={{ minHeight: "100vh" }}
         onClick={onClose}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.92, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 30 }}
-          transition={{ duration: 0.35, type: 'spring', bounce: 0.25 }}
+          transition={{ duration: 0.35, type: "spring", bounce: 0.25 }}
           className="minecraft-card glass-effect glow-effect w-full max-w-md p-8 relative animate-fade-in-scale max-h-[90vh] overflow-y-auto"
-          style={{ boxSizing: 'border-box' }}
+          style={{ boxSizing: "border-box" }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-6">
@@ -84,7 +84,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="username" className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
+              <label
+                htmlFor="username"
+                className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2"
+              >
                 Username
               </label>
               <div className="relative">
@@ -104,7 +107,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -112,7 +118,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   required
                   value={formData.password}
                   onChange={handleInputChange}
@@ -125,21 +131,29 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/70 hover:text-primary focus:outline-none"
                   tabIndex={-1}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
 
-            {error && <p className="text-red-500 text-sm mt-1 animate-bounce-subtle">{error}</p>}
+            {error && (
+              <p className="text-red-500 text-sm mt-1 animate-bounce-subtle">
+                {error}
+              </p>
+            )}
 
             <button
               type="submit"
               disabled={isLoading}
               className="minecraft-button w-full py-3 text-lg font-bold shadow-lg pulse-glow transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Please wait...' : 'Sign In'}
+              {isLoading ? "Please wait..." : "Sign In"}
             </button>
           </form>
         </motion.div>

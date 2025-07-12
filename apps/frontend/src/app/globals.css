@@ -1,13 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 
 @import "tailwindcss";
 
 @layer utilities {
   @keyframes ping-once {
-    0% { transform: scale(1); opacity: 1; }
-    60% { transform: scale(1.4); opacity: 0.5; }
-    100% { transform: scale(1); opacity: 0; }
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    60% {
+      transform: scale(1.4);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0;
+    }
   }
   .animate-ping-once {
     animation: ping-once 0.7s cubic-bezier(0, 0, 0.2, 1) 1;
@@ -15,18 +24,18 @@
 }
 
 :root {
-  --minecraft-primary: #3B8526;
+  --minecraft-primary: #3b8526;
   --minecraft-secondary: #825432;
-  --minecraft-accent: #8B4513;
-  --minecraft-grass: #7CB342;
+  --minecraft-accent: #8b4513;
+  --minecraft-grass: #7cb342;
   --minecraft-stone: #808080;
-  --minecraft-dirt: #8B4513;
-  --minecraft-wood: #DEB887;
-  --minecraft-dark: #2C2C2C;
-  --minecraft-light: #F5F5DC;
-  --minecraft-emerald: #00D084;
-  --minecraft-diamond: #8CFFFF;
-  --minecraft-gold: #FFAA00;
+  --minecraft-dirt: #8b4513;
+  --minecraft-wood: #deb887;
+  --minecraft-dark: #2c2c2c;
+  --minecraft-light: #f5f5dc;
+  --minecraft-emerald: #00d084;
+  --minecraft-diamond: #8cffff;
+  --minecraft-gold: #ffaa00;
 }
 
 @layer base {
@@ -92,7 +101,13 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
   }
 }
 
@@ -103,14 +118,22 @@
   border-radius: 1rem;
   font-weight: 600;
   transition: all 0.3s ease-out;
-  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)),
+    hsl(var(--primary) / 0.8)
+  );
   color: hsl(var(--primary-foreground));
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
   border: 2px solid hsl(var(--primary) / 0.2);
 }
 
 .minecraft-button:hover {
-  box-shadow: 0 25px 25px -5px hsl(var(--primary) / 0.25), 0 25px 50px -12px hsl(var(--primary) / 0.25);
+  box-shadow:
+    0 25px 25px -5px hsl(var(--primary) / 0.25),
+    0 25px 50px -12px hsl(var(--primary) / 0.25);
   transform: scale(1.05);
   border-color: hsl(var(--primary) / 0.4);
 }
@@ -120,7 +143,7 @@
 }
 
 .minecraft-button::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
@@ -137,14 +160,22 @@
   overflow: hidden;
   border-radius: 1.5rem;
   backdrop-filter: blur(20px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.7)
+  );
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
   transition: all 0.5s ease-out;
 }
 
 .dark .minecraft-card {
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(17, 24, 39, 0.7));
+  background: linear-gradient(
+    135deg,
+    rgba(17, 24, 39, 0.9),
+    rgba(17, 24, 39, 0.7)
+  );
   border-color: rgba(55, 65, 81, 0.2);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
 }
@@ -159,7 +190,7 @@
 }
 
 .minecraft-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, hsl(var(--primary) / 0.05), transparent);
@@ -177,19 +208,27 @@
   overflow: hidden;
   border-radius: 1.5rem;
   backdrop-filter: blur(20px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.6)
+  );
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
 }
 
 .dark .glass-effect {
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.6));
+  background: linear-gradient(
+    135deg,
+    rgba(17, 24, 39, 0.8),
+    rgba(17, 24, 39, 0.6)
+  );
   border-color: rgba(55, 65, 81, 0.3);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
 }
 
 .glass-effect::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
@@ -227,40 +266,43 @@
   color: rgb(107, 114, 128);
 }
 
-
-
 .minecraft-grid {
-  background-image: 
+  background-image:
     linear-gradient(rgba(59, 133, 38, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(59, 133, 38, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
 .glow-effect {
-  box-shadow: 
+  box-shadow:
     0 0 20px rgba(59, 133, 38, 0.3),
     0 0 40px rgba(59, 133, 38, 0.1),
     0 0 80px rgba(59, 133, 38, 0.05);
 }
 
 .text-glow {
-  text-shadow: 
+  text-shadow:
     0 0 10px rgba(59, 133, 38, 0.5),
     0 0 20px rgba(59, 133, 38, 0.3),
     0 0 30px rgba(59, 133, 38, 0.1);
 }
 
 .pixel-border {
-  box-shadow: 
-    0 0 0 2px #3B8526,
-    2px 2px 0 2px #2E6B1F,
-    -2px -2px 0 2px #4A9B2F;
+  box-shadow:
+    0 0 0 2px #3b8526,
+    2px 2px 0 2px #2e6b1f,
+    -2px -2px 0 2px #4a9b2f;
 }
 
 /* Modern animations */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .float-animation {
@@ -268,8 +310,13 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 133, 38, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(59, 133, 38, 0.6); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(59, 133, 38, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(59, 133, 38, 0.6);
+  }
 }
 
 .pulse-glow {
@@ -277,8 +324,12 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .shimmer {
@@ -287,13 +338,18 @@
 }
 
 .shimmer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
   animation: shimmer 2s infinite;
 }
 
@@ -343,8 +399,13 @@
 }
 
 @keyframes bounce-subtle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .animate-bounce-subtle {
@@ -379,30 +440,40 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Modern gradient backgrounds */
 .gradient-bg-primary {
-  background: linear-gradient(135deg, 
-    hsl(var(--primary)) 0%, 
-    hsl(var(--primary) / 0.8) 50%, 
-    hsl(var(--secondary)) 100%);
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary) / 0.8) 50%,
+    hsl(var(--secondary)) 100%
+  );
 }
 
 .gradient-bg-surface {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.95) 0%, 
-    rgba(255, 255, 255, 0.8) 50%, 
-    rgba(249, 250, 251, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(249, 250, 251, 0.9) 100%
+  );
 }
 
 .dark .gradient-bg-surface {
-  background: linear-gradient(135deg, 
-    rgba(17, 24, 39, 0.95) 0%, 
-    rgba(17, 24, 39, 0.8) 50%, 
-    rgba(31, 41, 55, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(17, 24, 39, 0.95) 0%,
+    rgba(17, 24, 39, 0.8) 50%,
+    rgba(31, 41, 55, 0.9) 100%
+  );
 }
 
 /* Enhanced focus states */

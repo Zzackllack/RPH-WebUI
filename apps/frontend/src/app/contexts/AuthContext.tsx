@@ -1,12 +1,16 @@
-'use client';
+"use client";
 
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface User {
   username: string;
 }
-
 
 interface AuthContextType {
   user: User | null;
@@ -16,19 +20,17 @@ interface AuthContextType {
   logout: () => void;
 }
 
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ENV_USER = process.env.NEXT_PUBLIC_DEMO_USERNAME || 'admin';
-const ENV_PASS = process.env.NEXT_PUBLIC_DEMO_PASSWORD || 'password';
-
+const ENV_USER = process.env.NEXT_PUBLIC_DEMO_USERNAME || "admin";
+const ENV_PASS = process.env.NEXT_PUBLIC_DEMO_PASSWORD || "password";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('rphwebui_user');
+    const savedUser = localStorage.getItem("rphwebui_user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -37,11 +39,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, password: string) => {
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     if (username === ENV_USER && password === ENV_PASS) {
       const userObj = { username };
       setUser(userObj);
-      localStorage.setItem('rphwebui_user', JSON.stringify(userObj));
+      localStorage.setItem("rphwebui_user", JSON.stringify(userObj));
       setIsLoading(false);
       return true;
     } else {
@@ -52,11 +54,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('rphwebui_user');
+    localStorage.removeItem("rphwebui_user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated: !!user, isLoading, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -65,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

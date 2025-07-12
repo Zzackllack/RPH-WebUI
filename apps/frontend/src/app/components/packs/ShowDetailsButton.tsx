@@ -25,7 +25,7 @@ export function ShowDetailsButton({ pack }: ShowDetailsButtonProps) {
     setHash(null);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks/${pack.id}/hash`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks/${pack.id}/hash`,
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const txt = await res.text();
@@ -163,7 +163,7 @@ resource-pack-sha1=${hash ?? "<loading>"}`}
               </motion.div>
             )}
           </AnimatePresence>,
-          document.body
+          document.body,
         )}
     </>
   );

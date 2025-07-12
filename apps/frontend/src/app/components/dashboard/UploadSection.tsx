@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, CheckCircle, FileText, Upload, XCircle } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertCircle,
+  CheckCircle,
+  FileText,
+  Upload,
+  XCircle,
+} from "lucide-react";
+import { useCallback, useState } from "react";
 
 interface UploadFile {
   file: File;
   progress: number;
-  status: 'pending' | 'uploading' | 'success' | 'error';
+  status: "pending" | "uploading" | "success" | "error";
   id: string;
   error?: string;
 }
@@ -21,124 +27,148 @@ export function UploadSection() {
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    
+
     const droppedFiles = Array.from(e.dataTransfer.files);
-    const zipFiles = droppedFiles.filter(file => 
-      file.name.toLowerCase().endsWith('.zip') || file.type === 'application/zip'
+    const zipFiles = droppedFiles.filter(
+      (file) =>
+        file.name.toLowerCase().endsWith(".zip") ||
+        file.type === "application/zip",
     );
-    
-    const newFiles: UploadFile[] = zipFiles.map(file => ({
+
+    const newFiles: UploadFile[] = zipFiles.map((file) => ({
       file,
       progress: 0,
-      status: 'pending',
-      id: generateId()
+      status: "pending",
+      id: generateId(),
     }));
-    
-    setFiles(prev => [...prev, ...newFiles]);
-    
+
+    setFiles((prev) => [...prev, ...newFiles]);
+
     // Start upload for each file
-    newFiles.forEach(uploadFile => {
+    newFiles.forEach((uploadFile) => {
       uploadSingleFile(uploadFile);
     });
   }, []);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
-    const zipFiles = selectedFiles.filter(file => 
-      file.name.toLowerCase().endsWith('.zip') || file.type === 'application/zip'
+    const zipFiles = selectedFiles.filter(
+      (file) =>
+        file.name.toLowerCase().endsWith(".zip") ||
+        file.type === "application/zip",
     );
-    
-    const newFiles: UploadFile[] = zipFiles.map(file => ({
+
+    const newFiles: UploadFile[] = zipFiles.map((file) => ({
       file,
       progress: 0,
-      status: 'pending',
-      id: generateId()
+      status: "pending",
+      id: generateId(),
     }));
-    
-    setFiles(prev => [...prev, ...newFiles]);
-    
+
+    setFiles((prev) => [...prev, ...newFiles]);
+
     // Start upload for each file
-    newFiles.forEach(uploadFile => {
+    newFiles.forEach((uploadFile) => {
       uploadSingleFile(uploadFile);
     });
-    
+
     // Reset input
-    e.target.value = '';
+    e.target.value = "";
   };
 
   const uploadSingleFile = async (uploadFile: UploadFile) => {
-    setFiles(prev => prev.map(f => 
-      f.id === uploadFile.id ? { ...f, status: 'uploading' as const } : f
-    ));
+    setFiles((prev) =>
+      prev.map((f) =>
+        f.id === uploadFile.id ? { ...f, status: "uploading" as const } : f,
+      ),
+    );
 
     try {
       const formData = new FormData();
-      formData.append('file', uploadFile.file);
+      formData.append("file", uploadFile.file);
 
       const xhr = new XMLHttpRequest();
-      
+
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
           const progress = Math.round((event.loaded / event.total) * 100);
-          setFiles(prev => prev.map(f => 
-            f.id === uploadFile.id ? { ...f, progress } : f
-          ));
+          setFiles((prev) =>
+            prev.map((f) => (f.id === uploadFile.id ? { ...f, progress } : f)),
+          );
         }
       };
 
       xhr.onload = () => {
         if (xhr.status === 201) {
-          setFiles(prev => prev.map(f => 
-            f.id === uploadFile.id ? { ...f, status: 'success' as const, progress: 100 } : f
-          ));
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === uploadFile.id
+                ? { ...f, status: "success" as const, progress: 100 }
+                : f,
+            ),
+          );
         } else {
-          setFiles(prev => prev.map(f => 
-            f.id === uploadFile.id ? { 
-              ...f, 
-              status: 'error' as const, 
-              error: `Upload failed with status ${xhr.status}` 
-            } : f
-          ));
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === uploadFile.id
+                ? {
+                    ...f,
+                    status: "error" as const,
+                    error: `Upload failed with status ${xhr.status}`,
+                  }
+                : f,
+            ),
+          );
         }
       };
 
       xhr.onerror = () => {
-        setFiles(prev => prev.map(f => 
-          f.id === uploadFile.id ? { 
-            ...f, 
-            status: 'error' as const, 
-            error: 'Network error occurred' 
-          } : f
-        ));
+        setFiles((prev) =>
+          prev.map((f) =>
+            f.id === uploadFile.id
+              ? {
+                  ...f,
+                  status: "error" as const,
+                  error: "Network error occurred",
+                }
+              : f,
+          ),
+        );
       };
 
-      xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks`);
+      xhr.open("POST", `${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks`);
       xhr.send(formData);
     } catch (error) {
-      setFiles(prev => prev.map(f => 
-        f.id === uploadFile.id ? { 
-          ...f, 
-          status: 'error' as const, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
-        } : f
-      ));
+      setFiles((prev) =>
+        prev.map((f) =>
+          f.id === uploadFile.id
+            ? {
+                ...f,
+                status: "error" as const,
+                error: error instanceof Error ? error.message : "Unknown error",
+              }
+            : f,
+        ),
+      );
     }
   };
 
   const removeFile = (id: string) => {
-    setFiles(prev => prev.filter(f => f.id !== id));
+    setFiles((prev) => prev.filter((f) => f.id !== id));
   };
 
   const clearCompleted = () => {
-    setFiles(prev => prev.filter(f => f.status === 'uploading' || f.status === 'pending'));
+    setFiles((prev) =>
+      prev.filter((f) => f.status === "uploading" || f.status === "pending"),
+    );
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   return (
@@ -157,31 +187,31 @@ export function UploadSection() {
         }}
         onDragLeave={() => setIsDragOver(false)}
         className={`minecraft-card p-8 border-2 border-dashed transition-all duration-300 ${
-          isDragOver 
-            ? 'border-primary bg-primary/5 scale-[1.02]' 
-            : 'border-gray-300 dark:border-gray-600'
+          isDragOver
+            ? "border-primary bg-primary/5 scale-[1.02]"
+            : "border-gray-300 dark:border-gray-600"
         }`}
       >
         <div className="text-center">
           <motion.div
-            animate={{ 
+            animate={{
               scale: isDragOver ? 1.1 : 1,
-              rotate: isDragOver ? 5 : 0 
+              rotate: isDragOver ? 5 : 0,
             }}
             transition={{ duration: 0.2 }}
             className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/25"
           >
             <Upload className="w-8 h-8 text-white" />
           </motion.div>
-          
+
           <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             Upload Resource Packs
           </h3>
-          
+
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Drag and drop your ZIP files here, or click to browse
           </p>
-          
+
           <motion.label
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -197,7 +227,7 @@ export function UploadSection() {
               className="hidden"
             />
           </motion.label>
-          
+
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
             Only ZIP files are accepted • Maximum 100MB per file
           </p>
@@ -209,7 +239,7 @@ export function UploadSection() {
         {files.length > 0 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
             className="mt-6"
@@ -228,7 +258,7 @@ export function UploadSection() {
                   Clear Completed
                 </motion.button>
               </div>
-              
+
               <div className="space-y-3">
                 <AnimatePresence>
                   {files.map((file) => (
@@ -242,18 +272,31 @@ export function UploadSection() {
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-3 flex-1 min-w-0">
-                          <div className={`p-2 rounded-xl ${
-                            file.status === 'success' ? 'bg-green-100 dark:bg-green-900/20' :
-                            file.status === 'error' ? 'bg-red-100 dark:bg-red-900/20' :
-                            file.status === 'uploading' ? 'bg-blue-100 dark:bg-blue-900/20' :
-                            'bg-gray-100 dark:bg-gray-800'
-                          }`}>
-                            {file.status === 'success' && <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />}
-                            {file.status === 'error' && <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />}
-                            {file.status === 'uploading' && <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
-                            {file.status === 'pending' && <AlertCircle className="w-4 h-4 text-gray-600 dark:text-gray-400" />}
+                          <div
+                            className={`p-2 rounded-xl ${
+                              file.status === "success"
+                                ? "bg-green-100 dark:bg-green-900/20"
+                                : file.status === "error"
+                                  ? "bg-red-100 dark:bg-red-900/20"
+                                  : file.status === "uploading"
+                                    ? "bg-blue-100 dark:bg-blue-900/20"
+                                    : "bg-gray-100 dark:bg-gray-800"
+                            }`}
+                          >
+                            {file.status === "success" && (
+                              <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            )}
+                            {file.status === "error" && (
+                              <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                            )}
+                            {file.status === "uploading" && (
+                              <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                            )}
+                            {file.status === "pending" && (
+                              <AlertCircle className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                            )}
                           </div>
-                          
+
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                               {file.file.name}
@@ -263,7 +306,7 @@ export function UploadSection() {
                             </p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center space-x-3">
                           <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                             {file.progress}%
@@ -278,7 +321,7 @@ export function UploadSection() {
                           </motion.button>
                         </div>
                       </div>
-                      
+
                       {/* Progress Bar */}
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
                         <motion.div
@@ -286,18 +329,20 @@ export function UploadSection() {
                           animate={{ width: `${file.progress}%` }}
                           transition={{ duration: 0.3, ease: "easeOut" }}
                           className={`h-full rounded-full transition-colors ${
-                            file.status === 'success' ? 'bg-green-500' :
-                            file.status === 'error' ? 'bg-red-500' :
-                            'bg-gradient-to-r from-primary to-emerald-500'
+                            file.status === "success"
+                              ? "bg-green-500"
+                              : file.status === "error"
+                                ? "bg-red-500"
+                                : "bg-gradient-to-r from-primary to-emerald-500"
                           }`}
                         />
                       </div>
-                      
+
                       {/* Error Message */}
                       {file.error && (
                         <motion.p
                           initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
+                          animate={{ opacity: 1, height: "auto" }}
                           className="text-sm text-red-600 dark:text-red-400 mt-2"
                         >
                           {file.error}

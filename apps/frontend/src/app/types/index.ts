@@ -37,7 +37,7 @@ export interface FilterOptions {
   search: string;
   mcVersion: string[];
   tags: string[];
-  sortBy: 'downloads' | 'rating' | 'newest' | 'oldest';
+  sortBy: "downloads" | "rating" | "newest" | "oldest";
   verified: boolean;
 }
 
@@ -55,7 +55,7 @@ export interface ApiResourcePack {
   id: number;
   originalFilename: string;
   storageFilename: string;
-  size: number;           // bytes
-  uploadDate: string;     // ISO date string
+  size: number; // bytes
+  uploadDate: string; // ISO date string
   fileHash?: string;
 }

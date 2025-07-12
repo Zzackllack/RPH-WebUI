@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Footer } from '@/app/components/layout/Footer';
-import { Header } from '@/app/components/layout/Header';
-import { useAuth } from '@/app/contexts/AuthContext';
-import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { Footer } from "@/app/components/layout/Footer";
+import { Header } from "@/app/components/layout/Header";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -16,7 +16,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

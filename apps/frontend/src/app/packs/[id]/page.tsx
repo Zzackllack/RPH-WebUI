@@ -48,7 +48,8 @@ export default function PackDetailsPage() {
   }, [id]);
 
   if (loading) {
-    return ( // Updated loading state
+    return (
+      // Updated loading state
       <div className="flex items-center justify-center min-h-[60vh] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -100,7 +101,8 @@ export default function PackDetailsPage() {
 
   const downloadUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${pack.storageFilename}`;
 
-  return ( // Updated main return
+  return (
+    // Updated main return
     <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden">
       {/* Animated background glows */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -126,7 +128,7 @@ export default function PackDetailsPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.97, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           className="minecraft-card p-8 space-y-8 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80"
         >
           <motion.h1
@@ -138,47 +140,49 @@ export default function PackDetailsPage() {
             {pack.originalFilename}
           </motion.h1>
 
-            {/* Download URL */}
-            <motion.div
+          {/* Download URL */}
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
             className="p-4 rounded-2xl bg-gradient-to-br from-white/80 to-emerald-50/60 dark:from-gray-900/80 dark:to-emerald-900/40 border border-green-400/20 flex flex-col gap-2 shadow-md"
-            >
+          >
             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
               <Download className="w-5 h-5 text-blue-500" /> Download URL
             </p>
             <div className="flex items-center gap-2 overflow-x-auto">
               <a
-              href={downloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="break-all text-blue-600 dark:text-blue-400 hover:underline font-mono text-xs"
+                href={downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="break-all text-blue-600 dark:text-blue-400 hover:underline font-mono text-xs"
               >
-              {downloadUrl}
+                {downloadUrl}
               </a>
               <button
-              className={`ml-2 p-1 rounded transition relative overflow-hidden ${copiedUrl ? 'bg-green-100 dark:bg-green-900/30' : 'hover:bg-blue-100 dark:hover:bg-blue-900/30'}`}
-              onClick={() => {
-                navigator.clipboard.writeText(downloadUrl);
-                setCopiedUrl(true);
-                setTimeout(() => setCopiedUrl(false), 1200);
-              }}
-              title={copiedUrl ? "Copied!" : "Copy URL"}
-              aria-label={copiedUrl ? "Copied!" : "Copy URL"}
+                className={`ml-2 p-1 rounded transition relative overflow-hidden ${copiedUrl ? "bg-green-100 dark:bg-green-900/30" : "hover:bg-blue-100 dark:hover:bg-blue-900/30"}`}
+                onClick={() => {
+                  navigator.clipboard.writeText(downloadUrl);
+                  setCopiedUrl(true);
+                  setTimeout(() => setCopiedUrl(false), 1200);
+                }}
+                title={copiedUrl ? "Copied!" : "Copy URL"}
+                aria-label={copiedUrl ? "Copied!" : "Copy URL"}
               >
-              <span className={`transition-all duration-200 ${copiedUrl ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}>
-                <Copy className="w-4 h-4 text-blue-400" />
-              </span>
-              <span
-                className={`transition-all duration-200 absolute inset-0 flex items-center justify-center ${copiedUrl ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
-                style={{ pointerEvents: 'none' }}
-              >
-                <Check className="w-4 h-4 text-green-500" />
-              </span>
+                <span
+                  className={`transition-all duration-200 ${copiedUrl ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
+                >
+                  <Copy className="w-4 h-4 text-blue-400" />
+                </span>
+                <span
+                  className={`transition-all duration-200 absolute inset-0 flex items-center justify-center ${copiedUrl ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
+                  style={{ pointerEvents: "none" }}
+                >
+                  <Check className="w-4 h-4 text-green-500" />
+                </span>
               </button>
             </div>
-            </motion.div>
+          </motion.div>
 
           {/* SHA-256 Hash */}
           <motion.div
@@ -192,12 +196,16 @@ export default function PackDetailsPage() {
             </p>
             <div className="flex items-center gap-2 overflow-x-auto">
               {hashLoading ? (
-                <span className="text-gray-600 dark:text-gray-400 animate-pulse">Loading…</span>
+                <span className="text-gray-600 dark:text-gray-400 animate-pulse">
+                  Loading…
+                </span>
               ) : hash ? (
                 <>
-                  <span className="break-all font-mono text-xs text-green-700 dark:text-green-300">{hash}</span>
+                  <span className="break-all font-mono text-xs text-green-700 dark:text-green-300">
+                    {hash}
+                  </span>
                   <button
-                    className={`ml-2 p-1 rounded transition relative overflow-hidden ${copiedHash ? 'bg-green-100 dark:bg-green-900/30' : 'hover:bg-green-100 dark:hover:bg-green-900/30'}`}
+                    className={`ml-2 p-1 rounded transition relative overflow-hidden ${copiedHash ? "bg-green-100 dark:bg-green-900/30" : "hover:bg-green-100 dark:hover:bg-green-900/30"}`}
                     onClick={() => {
                       if (hash) {
                         navigator.clipboard.writeText(hash);
@@ -208,17 +216,23 @@ export default function PackDetailsPage() {
                     title={copiedHash ? "Copied!" : "Copy Hash"}
                     aria-label={copiedHash ? "Copied!" : "Copy Hash"}
                   >
-                    <span className={`transition-all duration-200 ${copiedHash ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}>
+                    <span
+                      className={`transition-all duration-200 ${copiedHash ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
+                    >
                       <Copy className="w-4 h-4 text-green-400" />
                     </span>
-                    <span className={`transition-all duration-200 absolute inset-0 flex items-center justify-center ${copiedHash ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
-                      style={{ pointerEvents: 'none' }}>
+                    <span
+                      className={`transition-all duration-200 absolute inset-0 flex items-center justify-center ${copiedHash ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
+                      style={{ pointerEvents: "none" }}
+                    >
                       <Check className="w-4 h-4 text-green-500" />
                     </span>
                   </button>
                 </>
               ) : (
-                <span className="text-gray-600 dark:text-gray-400">No hash available</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  No hash available
+                </span>
               )}
             </div>
           </motion.div>
@@ -231,28 +245,35 @@ export default function PackDetailsPage() {
             className="relative p-4 rounded-2xl bg-gradient-to-br from-white/80 to-emerald-100/60 dark:from-gray-900/80 dark:to-emerald-900/40 border border-emerald-400/20 shadow-md"
           >
             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
-              <Braces className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> server.properties snippet
+              <Braces className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />{" "}
+              server.properties snippet
             </p>
             <div className="flex items-center gap-2">
               <pre className="bg-black/5 dark:bg-white/5 rounded-lg px-3 py-2 text-xs font-mono text-gray-800 dark:text-gray-100 select-all overflow-x shadow-inner border border-emerald-400/10 whitespace-pre-line break-words">
-{`resource-pack=${downloadUrl}
-resource-pack-sha1=${hash || ''}`}
+                {`resource-pack=${downloadUrl}
+resource-pack-sha1=${hash || ""}`}
               </pre>
               <button
-                className={`ml-2 p-1 rounded transition relative overflow-hidden ${copiedSnippet ? 'bg-green-100 dark:bg-green-900/30' : 'hover:bg-emerald-100 dark:hover:bg-emerald-900/30'}`}
+                className={`ml-2 p-1 rounded transition relative overflow-hidden ${copiedSnippet ? "bg-green-100 dark:bg-green-900/30" : "hover:bg-emerald-100 dark:hover:bg-emerald-900/30"}`}
                 onClick={() => {
-                  navigator.clipboard.writeText(`resource-pack=${downloadUrl}\nresource-pack-sha1=${hash || ''}`);
+                  navigator.clipboard.writeText(
+                    `resource-pack=${downloadUrl}\nresource-pack-sha1=${hash || ""}`,
+                  );
                   setCopiedSnippet(true);
                   setTimeout(() => setCopiedSnippet(false), 1200);
                 }}
                 title={copiedSnippet ? "Copied!" : "Copy snippet"}
                 aria-label={copiedSnippet ? "Copied!" : "Copy snippet"}
               >
-                <span className={`transition-all duration-200 ${copiedSnippet ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}>
+                <span
+                  className={`transition-all duration-200 ${copiedSnippet ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
+                >
                   <Copy className="w-4 h-4 text-emerald-400" />
                 </span>
-                <span className={`transition-all duration-200 absolute inset-0 flex items-center justify-center ${copiedSnippet ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
-                  style={{ pointerEvents: 'none' }}>
+                <span
+                  className={`transition-all duration-200 absolute inset-0 flex items-center justify-center ${copiedSnippet ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
+                  style={{ pointerEvents: "none" }}
+                >
                   <Check className="w-4 h-4 text-green-500" />
                 </span>
               </button>

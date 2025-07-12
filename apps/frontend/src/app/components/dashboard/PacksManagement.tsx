@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import type { FilterOptions, ResourcePack } from '@/app/types';
-import { format } from 'date-fns';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Edit, Filter, Grid, List, Search, Star, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import type { FilterOptions, ResourcePack } from "@/app/types";
+import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
+import { Edit, Filter, Grid, List, Search, Star, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 export function PacksManagement() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<FilterOptions>({
-    search: '',
+    search: "",
     mcVersion: [],
     tags: [],
-    sortBy: 'downloads',
+    sortBy: "downloads",
     verified: false,
   });
   const [packs, setPacks] = useState<ResourcePack[]>([]);
@@ -22,7 +22,7 @@ export function PacksManagement() {
     let ignore = false;
     setLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks`)
-      .then(res => res.json())
+      .then((res) => res.json())
       .then((data: ResourcePack[]) => {
         if (!ignore) setPacks(data);
       })
@@ -41,38 +41,43 @@ export function PacksManagement() {
     let filtered = packs;
 
     if (filters.search) {
-      filtered = filtered.filter(pack =>
-        pack.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        pack.description.toLowerCase().includes(filters.search.toLowerCase())
+      filtered = filtered.filter(
+        (pack) =>
+          pack.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+          pack.description.toLowerCase().includes(filters.search.toLowerCase()),
       );
     }
 
     if (filters.mcVersion.length > 0) {
-      filtered = filtered.filter(pack =>
-        pack.mcVersion.some(version => filters.mcVersion.includes(version))
+      filtered = filtered.filter((pack) =>
+        pack.mcVersion.some((version) => filters.mcVersion.includes(version)),
       );
     }
 
     if (filters.tags.length > 0) {
-      filtered = filtered.filter(pack =>
-        pack.tags.some(tag => filters.tags.includes(tag))
+      filtered = filtered.filter((pack) =>
+        pack.tags.some((tag) => filters.tags.includes(tag)),
       );
     }
 
     if (filters.verified) {
-      filtered = filtered.filter(pack => pack.verified);
+      filtered = filtered.filter((pack) => pack.verified);
     }
 
     filtered = [...filtered].sort((a, b) => {
       switch (filters.sortBy) {
-        case 'downloads':
+        case "downloads":
           return b.downloads - a.downloads;
-        case 'rating':
+        case "rating":
           return b.rating - a.rating;
-        case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case 'oldest':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case "newest":
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        case "oldest":
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         default:
           return 0;
       }
@@ -115,7 +120,7 @@ export function PacksManagement() {
         </span>
       </div>
       <div className="flex flex-wrap gap-1 mb-4">
-        {pack.tags.slice(0, 3).map(tag => (
+        {pack.tags.slice(0, 3).map((tag) => (
           <span
             key={tag}
             className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full"
@@ -126,7 +131,7 @@ export function PacksManagement() {
       </div>
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-500">
-          {format(new Date(pack.updatedAt), 'MMM d, yyyy')}
+          {format(new Date(pack.updatedAt), "MMM d, yyyy")}
         </span>
         <div className="flex items-center gap-2">
           <button className="p-2 text-gray-400 hover:text-green-600 transition-colors">
@@ -189,20 +194,26 @@ export function PacksManagement() {
       className="minecraft-card p-6"
     >
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Your Resource Packs</h2>
+        <h2 className="text-xl font-semibold text-gray-900">
+          Your Resource Packs
+        </h2>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setViewMode('grid')}
+            onClick={() => setViewMode("grid")}
             className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'grid' ? 'bg-green-100 text-green-600' : 'text-gray-400 hover:text-gray-600'
+              viewMode === "grid"
+                ? "bg-green-100 text-green-600"
+                : "text-gray-400 hover:text-gray-600"
             }`}
           >
             <Grid className="w-5 h-5" />
           </button>
           <button
-            onClick={() => setViewMode('list')}
+            onClick={() => setViewMode("list")}
             className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'list' ? 'bg-green-100 text-green-600' : 'text-gray-400 hover:text-gray-600'
+              viewMode === "list"
+                ? "bg-green-100 text-green-600"
+                : "text-gray-400 hover:text-gray-600"
             }`}
           >
             <List className="w-5 h-5" />
@@ -218,13 +229,20 @@ export function PacksManagement() {
             type="text"
             placeholder="Search packs..."
             value={filters.search}
-            onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, search: e.target.value }))
+            }
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           />
         </div>
         <select
           value={filters.sortBy}
-          onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as FilterOptions['sortBy'] }))}
+          onChange={(e) =>
+            setFilters((prev) => ({
+              ...prev,
+              sortBy: e.target.value as FilterOptions["sortBy"],
+            }))
+          }
           className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
         >
           <option value="downloads">Most Downloaded</option>
@@ -243,7 +261,7 @@ export function PacksManagement() {
         <div className="text-center py-12 text-gray-500">Loading...</div>
       ) : (
         <AnimatePresence mode="wait">
-          {viewMode === 'grid' ? (
+          {viewMode === "grid" ? (
             <motion.div
               key="grid"
               initial={{ opacity: 0 }}
@@ -251,7 +269,7 @@ export function PacksManagement() {
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              {filteredPacks.map(pack => (
+              {filteredPacks.map((pack) => (
                 <PackCard key={pack.id} pack={pack} />
               ))}
             </motion.div>
@@ -263,7 +281,7 @@ export function PacksManagement() {
               exit={{ opacity: 0 }}
               className="space-y-4"
             >
-              {filteredPacks.map(pack => (
+              {filteredPacks.map((pack) => (
                 <PackRow key={pack.id} pack={pack} />
               ))}
             </motion.div>
@@ -280,7 +298,9 @@ export function PacksManagement() {
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Search className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No packs found</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No packs found
+          </h3>
           <p className="text-gray-600">Try adjusting your search or filters</p>
         </motion.div>
       )}

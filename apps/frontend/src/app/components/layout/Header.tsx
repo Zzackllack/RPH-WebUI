@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { AuthModal } from '@/app/components/auth/AuthModal';
-import { useAuth } from '@/app/contexts/AuthContext';
-import { AnimatePresence, motion } from 'framer-motion';
-import { LogOut, Menu, User, X } from 'lucide-react';
-import { useState } from 'react';
-import { MinecraftLogo } from '../ui/MinecraftLogo';
+import { AuthModal } from "@/app/components/auth/AuthModal";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { AnimatePresence, motion } from "framer-motion";
+import { LogOut, Menu, User, X } from "lucide-react";
+import { useState } from "react";
+import { MinecraftLogo } from "../ui/MinecraftLogo";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -55,7 +55,11 @@ export function Header() {
             className="md:hidden p-2 rounded hover:bg-gray-800 transition-colors"
             aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {isMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
@@ -64,13 +68,17 @@ export function Header() {
         {isMenuOpen && (
           <motion.nav
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
             className="md:hidden bg-gray-900"
           >
-            <a href="#" className="block px-4 py-2 hover:bg-gray-800">Packs</a>
-            <a href="#" className="block px-4 py-2 hover:bg-gray-800">Upload</a>
+            <a href="#" className="block px-4 py-2 hover:bg-gray-800">
+              Packs
+            </a>
+            <a href="#" className="block px-4 py-2 hover:bg-gray-800">
+              Upload
+            </a>
           </motion.nav>
         )}
       </AnimatePresence>

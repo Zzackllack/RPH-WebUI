@@ -1,11 +1,11 @@
 "use client";
 
-import { ApiResourcePack } from '@/app/types';
-import { motion } from 'framer-motion';
-import { Calendar, Download, HardDrive, Info, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { ZipLogo } from '../ui/ZipLogo';
+import { ApiResourcePack } from "@/app/types";
+import { motion } from "framer-motion";
+import { Calendar, Download, HardDrive, Info, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { ZipLogo } from "../ui/ZipLogo";
 
 interface PackCardProps {
   pack: ApiResourcePack;
@@ -18,7 +18,7 @@ export function PackCard({ pack, onDelete }: PackCardProps) {
   const handleDelete = async () => {
     if (
       !window.confirm(
-        'Are you sure you want to delete this resource pack? This action cannot be undone.'
+        "Are you sure you want to delete this resource pack? This action cannot be undone.",
       )
     )
       return;
@@ -26,31 +26,31 @@ export function PackCard({ pack, onDelete }: PackCardProps) {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks/${pack.id}`,
-        { method: 'DELETE' }
+        { method: "DELETE" },
       );
       if (!res.ok && res.status !== 204)
         throw new Error(`Failed to delete (HTTP ${res.status})`);
       onDelete(pack.id);
     } catch (err) {
-      alert('Failed to delete resource pack.');
+      alert("Failed to delete resource pack.");
     } finally {
       setDeleting(false);
     }
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -59,7 +59,7 @@ export function PackCard({ pack, onDelete }: PackCardProps) {
   return (
     <motion.div
       whileHover={{ y: -4, scale: 1.02 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
       className="minecraft-card p-6 h-full flex flex-col relative group"
     >
       {/* Header with ZIP Logo */}
@@ -87,7 +87,7 @@ export function PackCard({ pack, onDelete }: PackCardProps) {
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
           <Calendar className="w-4 h-4 mr-2 text-green-500" />
           <span>
-            {pack.uploadDate ? formatDate(pack.uploadDate) : 'Unknown date'}
+            {pack.uploadDate ? formatDate(pack.uploadDate) : "Unknown date"}
           </span>
         </div>
       </div>
@@ -114,7 +114,7 @@ export function PackCard({ pack, onDelete }: PackCardProps) {
             className="w-full py-3 px-4 bg-red-600/90 hover:bg-red-700 text-white rounded-2xl text-sm font-medium flex items-center justify-center space-x-2 border border-red-700/40 transition-all duration-200 shadow-md shadow-red-500/10 z-10 relative group/delete-btn cursor-pointer"
           >
             <Trash2 className="w-4 h-4" />
-            <span>{deleting ? 'Deleting...' : 'Delete'}</span>
+            <span>{deleting ? "Deleting..." : "Delete"}</span>
           </motion.button>
           <div className="pointer-events-none absolute -inset-1 bg-gradient-to-r from-red-500 to-red-700 rounded-2xl blur opacity-0 group-hover/delete-btn:opacity-40 transition-opacity z-0" />
         </div>

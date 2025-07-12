@@ -1,10 +1,10 @@
 "use client";
 
-import { ApiResourcePack } from '@/app/types';
-import { motion } from 'framer-motion';
-import { FileArchive, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { PackCard } from './PackCard';
+import { ApiResourcePack } from "@/app/types";
+import { motion } from "framer-motion";
+import { FileArchive, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { PackCard } from "./PackCard";
 
 function PacksList() {
   const [packs, setPacks] = useState<ApiResourcePack[]>([]);
@@ -13,19 +13,19 @@ function PacksList() {
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks`)
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json() as Promise<ApiResourcePack[]>;
       })
-      .then(data => setPacks(data))
-      .catch(err => {
+      .then((data) => setPacks(data))
+      .catch((err) => {
         setError(err.message);
       })
       .finally(() => setLoading(false));
   }, []);
 
   const handleDelete = (id: number) => {
-    setPacks(prev => prev.filter(p => p.id !== id));
+    setPacks((prev) => prev.filter((p) => p.id !== id));
   };
 
   if (loading) {
@@ -89,14 +89,14 @@ function PacksList() {
       className="w-full max-w-6xl mx-auto"
     >
       <motion.h2
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-      className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-primary/70 to-emerald-400 bg-clip-text text-transparent"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-primary/70 to-emerald-400 bg-clip-text text-transparent"
       >
-      Resource Packs Collection
+        Resource Packs Collection
       </motion.h2>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {packs.map((pack, index) => (
           <motion.div
