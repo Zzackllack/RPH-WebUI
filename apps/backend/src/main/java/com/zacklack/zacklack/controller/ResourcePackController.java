@@ -2,11 +2,16 @@ package com.zacklack.zacklack.controller;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.io.EOFException;
+import java.net.SocketException;
+import org.apache.catalina.connector.ClientAbortException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestHeader;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,18 +58,29 @@ public class ResourcePackController {
     }
 
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<ResourcePack> uploadPack(@RequestParam("file") MultipartFile file) throws NoSuchAlgorithmException {
-        logger.info("[UPLOAD] Received upload request: filename={}, size={} bytes, contentType={}",
-            file.getOriginalFilename(), file.getSize(), file.getContentType());
+    public ResponseEntity<ResourcePack> uploadPack(
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request,
+            @RequestHeader(value = "User-Agent", required = false) String userAgent) throws NoSuchAlgorithmException {
+        String clientIp = request.getRemoteAddr();
+        logger.info("[UPLOAD] Received upload request: filename={}, size={} bytes, contentType={}, clientIp={}, userAgent={}",
+            file.getOriginalFilename(), file.getSize(), file.getContentType(), clientIp, userAgent);
         try {
             ResourcePack saved = service.store(file);
-            logger.info("[UPLOAD] Successfully stored file: {} ({} bytes)", file.getOriginalFilename(), file.getSize());
+            logger.info("[UPLOAD] Upload abgeschlossen und gespeichert: id={}, originalFilename={}, storageFilename={}, size={} bytes, clientIp={}, userAgent={}",
+                saved.getId(), saved.getOriginalFilename(), saved.getStorageFilename(), saved.getSize(), clientIp, userAgent);
             return ResponseEntity.status(201).body(saved);
+        } catch (EOFException | ClientAbortException | SocketException e) {
+            logger.warn("[UPLOAD] Client connection aborted during upload: {}: {}, clientIp={}, userAgent={}",
+                file.getOriginalFilename(), e.getMessage(), clientIp, userAgent, e);
+            // Keine Fehlerantwort nötig, Client ist schon weg
+            return ResponseEntity.status(204).build();
         } catch (IOException e) {
-            logger.error("[UPLOAD] IOException while storing file: {}: {}", file.getOriginalFilename(), e.getMessage(), e);
+            logger.error("[UPLOAD] IOException while storing file: {}: {}, clientIp={}, userAgent={}",
+                file.getOriginalFilename(), e.getMessage(), clientIp, userAgent, e);
             return ResponseEntity.status(500).build();
         } catch (Exception e) {
-            logger.error("[UPLOAD] Unexpected error: {}", e.getMessage(), e);
+            logger.error("[UPLOAD] Unexpected error: {}, clientIp={}, userAgent={}", e.getMessage(), clientIp, userAgent, e);
             return ResponseEntity.status(500).build();
         }
     }

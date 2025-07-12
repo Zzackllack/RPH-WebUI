@@ -108,10 +108,10 @@ public class ResourcePackService {
             hashHex,
             LocalDateTime.now()
         );
-        // Nur noch ein Debug-Log für das Entity, kein Info-Log mehr im Hot Path
         logger.debug("[UPLOAD] ResourcePack entity created: {}", rp);
         ResourcePack saved = repository.save(rp);
-        logger.info("[UPLOAD] ResourcePack saved to DB: id={}, originalFilename={}, storageFilename={}", saved.getId(), saved.getOriginalFilename(), saved.getStorageFilename());
+        logger.info("[UPLOAD] ResourcePack saved to DB: id={}, originalFilename={}, storageFilename={}, size={}, hash={}",
+            saved.getId(), saved.getOriginalFilename(), saved.getStorageFilename(), saved.getSize(), saved.getFileHash());
         return saved;
     }
 
