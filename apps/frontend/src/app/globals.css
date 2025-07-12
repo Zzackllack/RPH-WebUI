@@ -3,6 +3,17 @@
 
 @import "tailwindcss";
 
+@layer utilities {
+  @keyframes ping-once {
+    0% { transform: scale(1); opacity: 1; }
+    60% { transform: scale(1.4); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+  .animate-ping-once {
+    animation: ping-once 0.7s cubic-bezier(0, 0, 0.2, 1) 1;
+  }
+}
+
 :root {
   --minecraft-primary: #3B8526;
   --minecraft-secondary: #825432;
