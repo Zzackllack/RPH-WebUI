@@ -1,6 +1,7 @@
-
 package com.zacklack.zacklack.service;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,8 @@ import java.time.LocalDateTime;
 import java.util.Formatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +66,25 @@ public class ResourcePackService {
         return rp.getFileHash();
     }
 
+    /** Throws IllegalArgumentException if not a valid pack */
+    private void validateZip(MultipartFile file) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(file.getInputStream())) {
+            ZipEntry entry;
+            boolean hasMeta = false;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (!entry.isDirectory() && "pack.mcmeta".equals(entry.getName())) {
+                    hasMeta = true;
+                    break;
+                }
+            }
+            if (!hasMeta) {
+                throw new IllegalArgumentException("ZIP does not contain pack.mcmeta in root");
+            }
+        }
+    }
+
     public ResourcePack store(MultipartFile file) throws IOException, NoSuchAlgorithmException {
+        validateZip(file);
         logger.debug("[UPLOAD] Storing file: {} ({} bytes)", file.getOriginalFilename(), file.getSize());
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         String originalFilename = file.getOriginalFilename();
@@ -73,7 +94,6 @@ public class ResourcePackService {
         String storageFilename = UUID.randomUUID() + ext;
         Path target = uploadPath.resolve(storageFilename);
         long totalBytes = 0;
-        // Hash und Kopieren in einem Durchlauf mit großem Buffer (1 MB)
         byte[] buffer = new byte[1024 * 1024];
         try (DigestInputStream dis = new DigestInputStream(file.getInputStream(), digest)) {
             int bytesRead;
@@ -90,7 +110,6 @@ public class ResourcePackService {
             logger.error("[UPLOAD] Failed to save file {}: {}", originalFilename, e.getMessage(), e);
             throw new IOException("Failed to save file", e);
         }
-        // Hash berechnen
         String hashHex;
         byte[] hashBytes = digest.digest();
         try (Formatter fmt = new Formatter()) {
@@ -121,7 +140,6 @@ public class ResourcePackService {
      */
     public void delete(Long id) {
         ResourcePack rp = findById(id);
-        // Remove file from disk
         if (rp.getStorageFilename() != null && !rp.getStorageFilename().isEmpty()) {
             Path filePath = uploadPath.resolve(rp.getStorageFilename());
             try {
@@ -131,8 +149,26 @@ public class ResourcePackService {
                 logger.warn("[DELETE] Failed to delete file from disk: {}: {}", filePath, e.getMessage());
             }
         }
-        // Remove DB entry
         repository.deleteById(id);
         logger.info("[DELETE] Deleted ResourcePack from DB: id={}", id);
+    }
+
+    /**
+     * Compute SHA-256 hash of a file on disk.
+     */
+    public String computeHash(Path file) throws IOException, NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        try (InputStream is = Files.newInputStream(file);
+             DigestInputStream dis = new DigestInputStream(is, digest)) {
+            byte[] buffer = new byte[1024 * 1024];
+            while (dis.read(buffer) != -1) { /* just consume */ }
+        }
+        byte[] hashBytes = digest.digest();
+        try (Formatter fmt = new Formatter()) {
+            for (byte b : hashBytes) {
+                fmt.format("%02x", b);
+            }
+            return fmt.toString();
+        }
     }
 }

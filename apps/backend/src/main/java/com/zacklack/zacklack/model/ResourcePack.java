@@ -1,21 +1,24 @@
 package com.zacklack.zacklack.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "resource_packs")
 public class ResourcePack {
-
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name="original_filename", nullable = false)
@@ -25,14 +28,28 @@ public class ResourcePack {
     private String storageFilename;
 
     @Column(nullable = false)
-    private Long size; // in bytes
+    private Long size;
 
     @Column(name="file_hash", nullable = false, length = 64)
-    private String fileHash; // SHA-256 hash hex
+    private String fileHash;
 
     @Column(name="upload_date", nullable = false)
     private LocalDateTime uploadDate;
 
+    // ← NEW FIELDS
+    @Column(name="is_converted", nullable=false)
+    private boolean converted = false;
+
+    @Column(name="target_version")
+    private String targetVersion;
+
+    @ManyToOne
+    @JoinColumn(name="original_pack_id")
+    private ResourcePack originalPack;
+
+    @OneToMany(mappedBy="originalPack", cascade=CascadeType.ALL)
+    private List<ResourcePack> conversions;
+    
     public ResourcePack() {}
 
     public ResourcePack(String originalFilename, String storageFilename, Long size, String fileHash, LocalDateTime uploadDate) {
@@ -88,4 +105,17 @@ public class ResourcePack {
     public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
     }
+
+    public boolean isConverted() { return converted; }
+    public void setConverted(boolean converted) { this.converted = converted; }
+
+    public String getTargetVersion() { return targetVersion; }
+    public void setTargetVersion(String targetVersion) { this.targetVersion = targetVersion; }
+
+    public ResourcePack getOriginalPack() { return originalPack; }
+    public void setOriginalPack(ResourcePack originalPack) { this.originalPack = originalPack; }
+
+    public List<ResourcePack> getConversions() { return conversions; }
+    public void setConversions(List<ResourcePack> conversions) { this.conversions = conversions; }
 }
+

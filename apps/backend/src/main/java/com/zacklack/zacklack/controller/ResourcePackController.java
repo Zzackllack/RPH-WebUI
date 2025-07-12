@@ -20,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.zacklack.zacklack.model.ConversionJob;
 import com.zacklack.zacklack.model.ResourcePack;
+import com.zacklack.zacklack.repository.ConversionJobRepository;
+import com.zacklack.zacklack.service.ConverterService;
 import com.zacklack.zacklack.service.ResourcePackService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +34,15 @@ public class ResourcePackController {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourcePackController.class);
     private final ResourcePackService service;
+    private final ConverterService converterService;
+    private final ConversionJobRepository conversionJobRepository;
 
-    public ResourcePackController(ResourcePackService service) {
+    public ResourcePackController(ResourcePackService service,
+                                  ConverterService converterService,
+                                  ConversionJobRepository conversionJobRepository) {
         this.service = service;
+        this.converterService = converterService;
+        this.conversionJobRepository = conversionJobRepository;
     }
 
     @GetMapping
@@ -91,4 +100,22 @@ public class ResourcePackController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/convert")
+    public ResponseEntity<ConversionJob> convert(
+        @PathVariable Long id,
+        @RequestParam("version") String version) {
+
+        ConversionJob job = converterService.createJob(id, version);
+        converterService.runConversion(job.getId());
+        return ResponseEntity
+            .accepted()
+            .body(job);
+    }
+
+    @GetMapping("/conversions/{jobId}")
+    public ResponseEntity<ConversionJob> getJob(@PathVariable Long jobId) {
+        return ResponseEntity.of(conversionJobRepository.findById(jobId));
+    }
+    
 }
