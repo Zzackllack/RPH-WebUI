@@ -25,7 +25,7 @@ export function Footer() {
                 <MinecraftLogo className="w-10 h-10" />
               </div>
               <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-900 bg-clip-text text-transparent">
                   RPH-WebUI
                 </span>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -41,7 +41,7 @@ export function Footer() {
               className="text-gray-600 dark:text-gray-300 max-w-md leading-relaxed mb-6"
             >
               Modern, secure resource pack hosting for Minecraft. Upload, manage, and share your 
-              texture packs with the community. Built with love for the Minecraft ecosystem.
+              texture packs or implement them into your Server. Built with love for the Minecraft ecosystem.
             </motion.p>
 
             <motion.div
@@ -52,7 +52,7 @@ export function Footer() {
             >
               <span>Made with</span>
               <Heart className="w-4 h-4 text-red-500 animate-pulse" />
-              <span>for the Minecraft community</span>
+              <span>from Zacklack</span>
             </motion.div>
           </div>
 
@@ -76,37 +76,37 @@ export function Footer() {
               <li>
                 <motion.a
                   whileHover={{ x: 4, scale: 1.02 }}
-                  href="#"
+                  href="https://legal.zacklack.de/impressum/"
                   className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-all duration-200 flex items-center space-x-2"
                 >
-                  <span>Home</span>
+                  <span>Imprint</span>
                 </motion.a>
               </li>
               <li>
                 <motion.a
                   whileHover={{ x: 4, scale: 1.02 }}
-                  href="#"
+                  href="https://legal.zacklack.de/datenschutz/"
                   className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-all duration-200 flex items-center space-x-2"
                 >
-                  <span>Upload Packs</span>
+                  <span>Privacy policy</span>
                 </motion.a>
               </li>
               <li>
                 <motion.a
                   whileHover={{ x: 4, scale: 1.02 }}
-                  href="#"
+                  href="https://legal.zacklack.de/nutzungsbedingungen/"
                   className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-all duration-200 flex items-center space-x-2"
                 >
-                  <span>Browse Packs</span>
+                  <span>Terms of Use</span>
                 </motion.a>
               </li>
               <li>
                 <motion.a
                   whileHover={{ x: 4, scale: 1.02 }}
-                  href="#"
+                  href="https://legal.zacklack.de/cookies/"
                   className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-all duration-200 flex items-center space-x-2"
                 >
-                  <span>Documentation</span>
+                  <span>Cookie Policy</span>
                 </motion.a>
               </li>
             </motion.ul>

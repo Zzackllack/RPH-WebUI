@@ -1,21 +1,20 @@
 package com.zacklack.zacklack.controller;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.io.EOFException;
+import java.io.IOException;
 import java.net.SocketException;
-import org.apache.catalina.connector.ClientAbortException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestHeader;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zacklack.zacklack.model.ResourcePack;
 import com.zacklack.zacklack.service.ResourcePackService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/resourcepacks")

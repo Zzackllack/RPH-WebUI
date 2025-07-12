@@ -30,9 +30,8 @@ export function Header() {
           >
             <div className="relative">
               <MinecraftLogo className="w-10 h-10" />
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-emerald-500 rounded-xl blur opacity-20 animate-pulse"></div>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-900 bg-clip-text text-transparent">
               RPH-WebUI
             </span>
           </motion.div>
