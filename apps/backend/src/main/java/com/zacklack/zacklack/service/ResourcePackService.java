@@ -26,10 +26,14 @@ import com.zacklack.zacklack.repository.ResourcePackRepository;
 
 import jakarta.annotation.PostConstruct;
 
+/**
+ * Handles validation, storage, retrieval and deletion of ResourcePack files.
+ */
 @Service
 public class ResourcePackService {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourcePackService.class);
+
     private final ResourcePackRepository repository;
 
     @Value("${file.upload-dir}")
@@ -40,33 +44,59 @@ public class ResourcePackService {
         this.repository = repository;
     }
 
+    /** Initialize the upload directory on application startup. */
     @PostConstruct
     public void init() throws IOException {
         uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        logger.debug("[UPLOAD] Initializing upload directory: {}", uploadPath);
+        logger.debug("Initializing upload directory: {}", uploadPath);
         if (Files.notExists(uploadPath)) {
             Files.createDirectories(uploadPath);
-            logger.info("[UPLOAD] Created upload directory: {}", uploadPath);
+            logger.info("Created upload directory: {}", uploadPath);
         } else {
-            logger.info("[UPLOAD] Using existing upload directory: {}", uploadPath);
+            logger.info("Using existing upload directory: {}", uploadPath);
         }
     }
 
+    /**
+     * List all ResourcePack records.
+     *
+     * @return List of persisted ResourcePack entities
+     */
     public List<ResourcePack> findAll() {
+        logger.debug("Listing all ResourcePacks");
         return repository.findAll();
     }
 
+    /**
+     * Retrieve a ResourcePack by ID.
+     *
+     * @param id database ID of the resource pack
+     * @return ResourcePack entity or throws if not found
+     */
     public ResourcePack findById(Long id) {
+        logger.debug("Looking up ResourcePack with id={}", id);
         return repository.findById(id)
             .orElseThrow(() -> new RuntimeException("ResourcePack not found: " + id));
     }
 
+    /**
+     * Get the stored file SHA-256 hash for a pack.
+     *
+     * @param id pack ID
+     * @return hex-encoded SHA-256 hash
+     */
     public String findHashById(Long id) {
         ResourcePack rp = findById(id);
         return rp.getFileHash();
     }
 
-    /** Throws IllegalArgumentException if not a valid pack */
+    /**
+     * Ensure uploaded ZIP contains at least the root-level pack.mcmeta.
+     *
+     * @param file uploaded ZIP
+     * @throws IOException if reading fails
+     * @throws IllegalArgumentException if validation fails
+     */
     private void validateZip(MultipartFile file) throws IOException {
         try (ZipInputStream zis = new ZipInputStream(file.getInputStream())) {
             ZipEntry entry;
@@ -78,94 +108,101 @@ public class ResourcePackService {
                 }
             }
             if (!hasMeta) {
-                throw new IllegalArgumentException("ZIP does not contain pack.mcmeta in root");
+                throw new IllegalArgumentException("ZIP must contain pack.mcmeta at root");
             }
         }
     }
 
+    /**
+     * Store the uploaded file to disk, compute its SHA-256 hash and persist metadata.
+     *
+     * @param file uploaded ZIP
+     * @return persisted ResourcePack entity
+     * @throws IOException if storage fails
+     * @throws NoSuchAlgorithmException if SHA-256 unsupported (won’t happen)
+     */
     public ResourcePack store(MultipartFile file) throws IOException, NoSuchAlgorithmException {
         validateZip(file);
-        logger.debug("[UPLOAD] Storing file: {} ({} bytes)", file.getOriginalFilename(), file.getSize());
+        logger.debug("Storing file {} ({} bytes)", file.getOriginalFilename(), file.getSize());
+
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         String originalFilename = file.getOriginalFilename();
-        String ext = originalFilename != null && originalFilename.contains(".")
-            ? originalFilename.substring(originalFilename.lastIndexOf('.'))
-            : "";
+        String ext = (originalFilename != null && originalFilename.contains(".")) ?
+                     originalFilename.substring(originalFilename.lastIndexOf('.')) : "";
         String storageFilename = UUID.randomUUID() + ext;
         Path target = uploadPath.resolve(storageFilename);
+
         long totalBytes = 0;
         byte[] buffer = new byte[1024 * 1024];
-        try (DigestInputStream dis = new DigestInputStream(file.getInputStream(), digest)) {
+        try (DigestInputStream dis = new DigestInputStream(file.getInputStream(), digest);
+             var os = Files.newOutputStream(target)) {
             int bytesRead;
-            try (java.io.OutputStream os = java.nio.file.Files.newOutputStream(
-                    target,
-                    java.nio.file.StandardOpenOption.CREATE,
-                    java.nio.file.StandardOpenOption.TRUNCATE_EXISTING)) {
-                while ((bytesRead = dis.read(buffer)) != -1) {
-                    os.write(buffer, 0, bytesRead);
-                    totalBytes += bytesRead;
-                }
+            while ((bytesRead = dis.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+                totalBytes += bytesRead;
             }
         } catch (Exception e) {
-            logger.error("[UPLOAD] Failed to save file {}: {}", originalFilename, e.getMessage(), e);
+            logger.error("Failed to save file {}: {}", originalFilename, e.getMessage(), e);
             throw new IOException("Failed to save file", e);
         }
+
+        // Compute hash hex
         String hashHex;
-        byte[] hashBytes = digest.digest();
         try (Formatter fmt = new Formatter()) {
-            for (byte b : hashBytes) {
+            for (byte b : digest.digest()) {
                 fmt.format("%02x", b);
             }
             hashHex = fmt.toString();
         }
-        logger.info("[UPLOAD] File saved to: {} ({} bytes)", target, totalBytes);
 
+        logger.info("File saved: {} ({} bytes) hash={}", target, totalBytes, hashHex);
         ResourcePack rp = new ResourcePack(
-            originalFilename,
-            storageFilename,
-            totalBytes,
-            hashHex,
-            LocalDateTime.now()
+            originalFilename, storageFilename, totalBytes, hashHex, LocalDateTime.now()
         );
-        logger.debug("[UPLOAD] ResourcePack entity created: {}", rp);
         ResourcePack saved = repository.save(rp);
-        logger.info("[UPLOAD] ResourcePack saved to DB: id={}, originalFilename={}, storageFilename={}, size={}, hash={}",
-            saved.getId(), saved.getOriginalFilename(), saved.getStorageFilename(), saved.getSize(), saved.getFileHash());
+        logger.debug("Persisted ResourcePack id={}", saved.getId());
         return saved;
     }
 
     /**
-     * Delete a resource pack by ID, removing both the DB entry and the file from disk.
+     * Delete both the DB entry and the file from disk.
+     *
      * @param id ResourcePack ID
      */
     public void delete(Long id) {
         ResourcePack rp = findById(id);
+
         if (rp.getStorageFilename() != null && !rp.getStorageFilename().isEmpty()) {
             Path filePath = uploadPath.resolve(rp.getStorageFilename());
             try {
                 Files.deleteIfExists(filePath);
-                logger.info("[DELETE] Deleted file from disk: {}", filePath);
+                logger.info("Deleted file: {}", filePath);
             } catch (IOException e) {
-                logger.warn("[DELETE] Failed to delete file from disk: {}: {}", filePath, e.getMessage());
+                logger.warn("Failed to delete file {}: {}", filePath, e.getMessage());
             }
         }
+
         repository.deleteById(id);
-        logger.info("[DELETE] Deleted ResourcePack from DB: id={}", id);
+        logger.info("Deleted ResourcePack id={}", id);
     }
 
     /**
-     * Compute SHA-256 hash of a file on disk.
+     * Compute SHA-256 of a file on disk.
+     *
+     * @param file Path to file
+     * @return hex-encoded SHA-256 digest
+     * @throws IOException on I/O errors
+     * @throws NoSuchAlgorithmException should not happen
      */
     public String computeHash(Path file) throws IOException, NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         try (InputStream is = Files.newInputStream(file);
              DigestInputStream dis = new DigestInputStream(is, digest)) {
             byte[] buffer = new byte[1024 * 1024];
-            while (dis.read(buffer) != -1) { /* just consume */ }
+            while (dis.read(buffer) != -1) { /* consume */ }
         }
-        byte[] hashBytes = digest.digest();
         try (Formatter fmt = new Formatter()) {
-            for (byte b : hashBytes) {
+            for (byte b : digest.digest()) {
                 fmt.format("%02x", b);
             }
             return fmt.toString();

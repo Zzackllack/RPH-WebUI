@@ -28,11 +28,15 @@ import com.zacklack.zacklack.service.ResourcePackService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * REST controller exposing CRUD and conversion endpoints for ResourcePacks.
+ */
 @RestController
 @RequestMapping("/api/resourcepacks")
 public class ResourcePackController {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourcePackController.class);
+
     private final ResourcePackService service;
     private final ConverterService converterService;
     private final ConversionJobRepository conversionJobRepository;
@@ -45,77 +49,127 @@ public class ResourcePackController {
         this.conversionJobRepository = conversionJobRepository;
     }
 
+    /**
+     * List all resource packs.
+     *
+     * @return list of all ResourcePack entities
+     */
     @GetMapping
     public List<ResourcePack> getAllPacks() {
+        logger.debug("Fetching all resource packs");
         return service.findAll();
     }
 
+    /**
+     * Fetch a single ResourcePack by its ID.
+     *
+     * @param id ID of the pack to retrieve
+     * @return 200 + ResourcePack or 404 if not found
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ResourcePack> getPack(@PathVariable Long id) {
+        logger.debug("Fetching resource pack with id={}", id);
         return ResponseEntity.of(
-            service.findAll().stream().filter(p->p.getId().equals(id)).findFirst()
+            service.findAll().stream().filter(p -> p.getId().equals(id)).findFirst()
         );
     }
 
+    /**
+     * Get the SHA-256 hash of the stored file for a given pack.
+     *
+     * @param id pack ID
+     * @return 200 + hash string or 404 if pack not found
+     */
     @GetMapping("/{id}/hash")
     public ResponseEntity<String> getHash(@PathVariable Long id) {
         try {
             String hash = service.findHashById(id);
+            logger.debug("Hash for pack {}: {}", id, hash);
             return ResponseEntity.ok(hash);
         } catch (RuntimeException e) {
+            logger.warn("Hash requested for non-existent pack id={}", id, e);
             return ResponseEntity.notFound().build();
         }
     }
 
+    /**
+     * Upload a new resource pack ZIP (must contain pack.mcmeta).
+     *
+     * @param file      uploaded ZIP file
+     * @param request   servlet request (for client IP)
+     * @param userAgent optional User-Agent header
+     * @return 201 + created ResourcePack or appropriate error status
+     */
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ResourcePack> uploadPack(
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request,
-            @RequestHeader(value = "User-Agent", required = false) String userAgent) throws NoSuchAlgorithmException {
+            @RequestHeader(value = "User-Agent", required = false) String userAgent
+    ) throws NoSuchAlgorithmException {
         String clientIp = request.getRemoteAddr();
-        logger.info("[UPLOAD] Received upload request: filename={}, size={} bytes, contentType={}, clientIp={}, userAgent={}",
-            file.getOriginalFilename(), file.getSize(), file.getContentType(), clientIp, userAgent);
+        logger.info("[UPLOAD] Start: filename={}, size={} bytes, clientIp={}, userAgent={}",
+            file.getOriginalFilename(), file.getSize(), clientIp, userAgent);
+
         try {
             ResourcePack saved = service.store(file);
-            logger.info("[UPLOAD] Upload abgeschlossen und gespeichert: id={}, originalFilename={}, storageFilename={}, size={} bytes, clientIp={}, userAgent={}",
-                saved.getId(), saved.getOriginalFilename(), saved.getStorageFilename(), saved.getSize(), clientIp, userAgent);
+            logger.info("[UPLOAD] Success: saved pack id={} ({} bytes)",
+                saved.getId(), saved.getSize());
             return ResponseEntity.status(201).body(saved);
+
         } catch (EOFException | ClientAbortException | SocketException e) {
-            logger.warn("[UPLOAD] Client connection aborted during upload: {}: {}, clientIp={}, userAgent={}",
-                file.getOriginalFilename(), e.getMessage(), clientIp, userAgent, e);
-            // Keine Fehlerantwort nötig, Client ist schon weg
+            logger.warn("[UPLOAD] Client aborted during upload: {} — {}", file.getOriginalFilename(), e.getMessage());
             return ResponseEntity.status(204).build();
+
         } catch (IOException e) {
-            logger.error("[UPLOAD] IOException while storing file: {}: {}, clientIp={}, userAgent={}",
-                file.getOriginalFilename(), e.getMessage(), clientIp, userAgent, e);
+            logger.error("[UPLOAD] I/O error storing file {}: {}", file.getOriginalFilename(), e.getMessage(), e);
             return ResponseEntity.status(500).build();
-        } catch (Exception e) {
-            logger.error("[UPLOAD] Unexpected error: {}, clientIp={}, userAgent={}", e.getMessage(), clientIp, userAgent, e);
+
+        } catch (RuntimeException e) {
+            logger.error("[UPLOAD] Unexpected runtime error: {}", e.getMessage(), e);
             return ResponseEntity.status(500).build();
         }
     }
-    
+
+    /**
+     * Delete a resource pack by ID.
+     *
+     * @param id ID of the pack to delete
+     * @return 204 if deletion successful
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteResourcePack(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteResourcePack(@PathVariable Long id) {
+        logger.debug("Deleting resource pack id={}", id);
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Trigger an asynchronous conversion job for a pack.
+     *
+     * @param id      pack ID
+     * @param version target Minecraft version
+     * @return 202 + ConversionJob info
+     */
     @PostMapping("/{id}/convert")
     public ResponseEntity<ConversionJob> convert(
         @PathVariable Long id,
-        @RequestParam("version") String version) {
-
+        @RequestParam("version") String version
+    ) {
+        logger.info("Creating conversion job for pack={} to version={}", id, version);
         ConversionJob job = converterService.createJob(id, version);
         converterService.runConversion(job.getId());
-        return ResponseEntity
-            .accepted()
-            .body(job);
+        return ResponseEntity.accepted().body(job);
     }
 
+    /**
+     * Retrieve status of a conversion job.
+     *
+     * @param jobId conversion job ID
+     * @return 200 + ConversionJob or 404 if unknown
+     */
     @GetMapping("/conversions/{jobId}")
     public ResponseEntity<ConversionJob> getJob(@PathVariable Long jobId) {
+        logger.debug("Fetching conversion job id={}", jobId);
         return ResponseEntity.of(conversionJobRepository.findById(jobId));
     }
-    
 }
