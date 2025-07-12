@@ -89,12 +89,12 @@ function PacksList() {
       className="w-full max-w-6xl mx-auto"
     >
       <motion.h2
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+      className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-primary/70 to-emerald-400 bg-clip-text text-transparent"
       >
-        Resource Packs Collection
+      Resource Packs Collection
       </motion.h2>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

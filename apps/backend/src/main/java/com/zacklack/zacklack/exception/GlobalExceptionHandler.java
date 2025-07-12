@@ -1,5 +1,6 @@
 package com.zacklack.zacklack.exception;
 
+import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,12 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(ClientAbortException.class)
+    public ResponseEntity<String> handleClientAbortException(ClientAbortException ex) {
+        logger.warn("[UPLOAD] Client aborted connection: {}", ex.getMessage());
+        // Keine Fehlerantwort nötig, Client ist schon weg
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Client aborted connection");
+    }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException ex) {
         logger.error("[UPLOAD] MaxUploadSizeExceededException: {}", ex.getMessage(), ex);

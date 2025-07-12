@@ -1,10 +1,9 @@
-package com.zacklack.zacklack.service;
 
+package com.zacklack.zacklack.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -66,46 +65,50 @@ public class ResourcePackService {
 
     public ResourcePack store(MultipartFile file) throws IOException, NoSuchAlgorithmException {
         logger.debug("[UPLOAD] Storing file: {} ({} bytes)", file.getOriginalFilename(), file.getSize());
-        // compute hash
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        String hashHex;
-        try (DigestInputStream dis = new DigestInputStream(file.getInputStream(), digest)) {
-            // read to EOF to compute
-            while (dis.read() != -1) {}
-            byte[] hashBytes = digest.digest();
-            try (Formatter fmt = new Formatter()) {
-                for (byte b : hashBytes) {
-                    fmt.format("%02x", b);
-                }
-                hashHex = fmt.toString();
-            }
-            logger.debug("[UPLOAD] Computed SHA-256 hash: {}", hashHex);
-        } catch (Exception e) {
-            logger.error("[UPLOAD] Failed to compute hash for file {}: {}", file.getOriginalFilename(), e.getMessage(), e);
-            throw new IOException("Failed to compute hash", e);
-        }
-
         String originalFilename = file.getOriginalFilename();
         String ext = originalFilename != null && originalFilename.contains(".")
             ? originalFilename.substring(originalFilename.lastIndexOf('.'))
             : "";
         String storageFilename = UUID.randomUUID() + ext;
         Path target = uploadPath.resolve(storageFilename);
-        try {
-            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-            logger.info("[UPLOAD] File saved to: {} ({} bytes)", target, file.getSize());
+        long totalBytes = 0;
+        // Hash und Kopieren in einem Durchlauf mit großem Buffer (1 MB)
+        byte[] buffer = new byte[1024 * 1024];
+        try (DigestInputStream dis = new DigestInputStream(file.getInputStream(), digest)) {
+            int bytesRead;
+            try (java.io.OutputStream os = java.nio.file.Files.newOutputStream(
+                    target,
+                    java.nio.file.StandardOpenOption.CREATE,
+                    java.nio.file.StandardOpenOption.TRUNCATE_EXISTING)) {
+                while ((bytesRead = dis.read(buffer)) != -1) {
+                    os.write(buffer, 0, bytesRead);
+                    totalBytes += bytesRead;
+                }
+            }
         } catch (Exception e) {
             logger.error("[UPLOAD] Failed to save file {}: {}", originalFilename, e.getMessage(), e);
             throw new IOException("Failed to save file", e);
         }
+        // Hash berechnen
+        String hashHex;
+        byte[] hashBytes = digest.digest();
+        try (Formatter fmt = new Formatter()) {
+            for (byte b : hashBytes) {
+                fmt.format("%02x", b);
+            }
+            hashHex = fmt.toString();
+        }
+        logger.info("[UPLOAD] File saved to: {} ({} bytes)", target, totalBytes);
 
         ResourcePack rp = new ResourcePack(
             originalFilename,
             storageFilename,
-            file.getSize(),
+            totalBytes,
             hashHex,
             LocalDateTime.now()
         );
+        // Nur noch ein Debug-Log für das Entity, kein Info-Log mehr im Hot Path
         logger.debug("[UPLOAD] ResourcePack entity created: {}", rp);
         ResourcePack saved = repository.save(rp);
         logger.info("[UPLOAD] ResourcePack saved to DB: id={}, originalFilename={}, storageFilename={}", saved.getId(), saved.getOriginalFilename(), saved.getStorageFilename());
