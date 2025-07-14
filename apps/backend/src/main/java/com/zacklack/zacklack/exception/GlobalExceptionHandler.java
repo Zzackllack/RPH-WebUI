@@ -1,3 +1,4 @@
+
 package com.zacklack.zacklack.exception;
 
 import java.io.EOFException;
@@ -21,6 +22,15 @@ import jakarta.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    /** Invalid resource pack ZIP (e.g., missing pack.mcmeta). */
+    @ExceptionHandler(InvalidPackException.class)
+    public ResponseEntity<String> handleInvalidPackException(InvalidPackException ex, HttpServletRequest request) {
+        logger.warn("Invalid resource pack: {} | IP={} | UA={}",
+            ex.getMessage(), request.getRemoteAddr(), request.getHeader("User-Agent"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(ex.getMessage());
+    }
 
     /** Client closed the connection mid-upload. */
     @ExceptionHandler(EOFException.class)

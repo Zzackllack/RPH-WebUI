@@ -21,10 +21,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.zacklack.zacklack.exception.InvalidPackException;
 import com.zacklack.zacklack.model.ResourcePack;
 import com.zacklack.zacklack.repository.ResourcePackRepository;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Handles validation, storage, retrieval and deletion of ResourcePack files.
@@ -92,12 +94,14 @@ public class ResourcePackService {
 
     /**
      * Ensure uploaded ZIP contains at least the root-level pack.mcmeta.
+     * Logs filename, size, IP, and user agent if invalid.
      *
      * @param file uploaded ZIP
+     * @param request HttpServletRequest for logging client info
      * @throws IOException if reading fails
-     * @throws IllegalArgumentException if validation fails
+     * @throws InvalidPackException if validation fails
      */
-    private void validateZip(MultipartFile file) throws IOException {
+    private void validateZip(MultipartFile file, HttpServletRequest request) throws IOException {
         try (ZipInputStream zis = new ZipInputStream(file.getInputStream())) {
             ZipEntry entry;
             boolean hasMeta = false;
@@ -108,7 +112,12 @@ public class ResourcePackService {
                 }
             }
             if (!hasMeta) {
-                throw new IllegalArgumentException("ZIP must contain pack.mcmeta at root");
+                String clientIp = request != null ? request.getRemoteAddr() : "unknown";
+                String userAgent = request != null ? request.getHeader("User-Agent") : "unknown";
+                logger.warn("Invalid resource pack upload attempt: pack.mcmeta missing | filename={} | size={} | IP={} | UA={}",
+                    file.getOriginalFilename(), file.getSize(), clientIp, userAgent);
+                throw new InvalidPackException("Invalid resource pack: pack.mcmeta not found in ZIP (filename="
+                        + file.getOriginalFilename() + ", IP=" + clientIp + ", UA=" + userAgent + ")");
             }
         }
     }
@@ -121,9 +130,11 @@ public class ResourcePackService {
      * @throws IOException if storage fails
      * @throws NoSuchAlgorithmException if SHA-256 unsupported (won’t happen)
      */
-    public ResourcePack store(MultipartFile file) throws IOException, NoSuchAlgorithmException {
-        validateZip(file);
-        logger.debug("Storing file {} ({} bytes)", file.getOriginalFilename(), file.getSize());
+    public ResourcePack store(MultipartFile file, HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
+        validateZip(file, request);
+        logger.debug("Storing file {} ({} bytes) | IP={} | UA={}", file.getOriginalFilename(), file.getSize(),
+            request != null ? request.getRemoteAddr() : "unknown",
+            request != null ? request.getHeader("User-Agent") : "unknown");
 
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         String originalFilename = file.getOriginalFilename();

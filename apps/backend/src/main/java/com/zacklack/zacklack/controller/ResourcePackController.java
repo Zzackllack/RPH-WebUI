@@ -111,7 +111,7 @@ public class ResourcePackController {
             file.getOriginalFilename(), file.getSize(), clientIp, userAgent);
 
         try {
-            ResourcePack saved = service.store(file);
+            ResourcePack saved = service.store(file, request);
             logger.info("[UPLOAD] Success: saved pack id={} ({} bytes)",
                 saved.getId(), saved.getSize());
             return ResponseEntity.status(201).body(saved);
