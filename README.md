@@ -23,7 +23,7 @@ RPH-WebUI is a full-stack platform for hosting, sharing, and managing Minecraft 
 
 Note that the backend instead of using jitpack (I may am too stupid to get that to work) you need to use the local jar file of ResourcePackConverter. For this, you need to download the [ResourcePackConverter **Console Version**](https://github.com/agentdid127/ResourcePackConverter/releases) and install it into your local Maven repository or use the JAR file directly.
 
-*Install the jar file into your local Maven repository:*
+*Install the jar file into your local Maven repository, you can use the `apps/backend/src/main/resources/ResourcePackConverter.jar` if it is still up to date:*
 
 ```bash
 cd apps/backend

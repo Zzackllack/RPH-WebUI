@@ -519,3 +519,24 @@ site/
 # Test files
 test-results/
 coverage/
+
+# =============================================================================
+# CLOUDFLARE & WRANGLER
+# =============================================================================
+
+# Cloudflare Wrangler
+.wrangler/
+.wrangler.toml
+.wrangler-dev.toml
+
+# OpenNext (Cloudflare adapter)
+.open-next/
+
+# Cloudflare Pages
+.functions/
+.cloudflare/
+.cloudflareignore
+
+# Cloudflare KV and D1 local data
+.d1/
+.kv/
