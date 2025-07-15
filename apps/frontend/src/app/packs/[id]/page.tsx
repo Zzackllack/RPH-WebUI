@@ -1,6 +1,6 @@
 "use client";
 
-import type { ApiResourcePack } from "@/app/types";
+import type { ApiResourcePack, ApiConversionJob } from "@/app/types";
 import { motion } from "framer-motion";
 import { Braces, Check, Copy, Download, Hash, X } from "lucide-react";
 import Link from "next/link";
@@ -10,21 +10,36 @@ import { useEffect, useState } from "react";
 export default function PackDetailsPage() {
   const { id } = useParams();
   const router = useRouter();
+
+  // Original pack
   const [pack, setPack] = useState<ApiResourcePack | null>(null);
-  const [hash, setHash] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [hashLoading, setHashLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Hash
+  const [hash, setHash] = useState<string | null>(null);
+  const [hashLoading, setHashLoading] = useState(false);
+
+  // Conversion
+  const [version, setVersion] = useState<string>("1.20.1");
+  const [job, setJob] = useState<ApiConversionJob | null>(null);
+  const [polling, setPolling] = useState(false);
+
+  // Converted pack
+  const [convertedPack, setConvertedPack] = useState<ApiResourcePack | null>(null);
 
   // Copy button states
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedHash, setCopiedHash] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
 
+  const API = process.env.NEXT_PUBLIC_API_URL;
+
+  // Load original pack
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks/${id}`)
+    fetch(`${API}/api/resourcepacks/${id}`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<ApiResourcePack>;
@@ -32,12 +47,13 @@ export default function PackDetailsPage() {
       .then(setPack)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, API]);
 
+  // Load its hash
   useEffect(() => {
     if (!id) return;
     setHashLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resourcepacks/${id}/hash`)
+    fetch(`${API}/api/resourcepacks/${id}/hash`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.text();
@@ -45,11 +61,53 @@ export default function PackDetailsPage() {
       .then((txt) => setHash(txt.trim()))
       .catch((e) => setError(e.message))
       .finally(() => setHashLoading(false));
-  }, [id]);
+  }, [id, API]);
+
+  // Kick off a conversion job
+  const startConversion = async () => {
+    setJob(null);
+    setConvertedPack(null);
+    const res = await fetch(
+      `${API}/api/resourcepacks/${id}/convert?version=${encodeURIComponent(version)}`,
+      { method: "POST" }
+    );
+    if (!res.ok) {
+      setError(`Conversion request failed: ${res.status}`);
+      return;
+    }
+    const jobData: ApiConversionJob = await res.json();
+    setJob(jobData);
+    setPolling(true);
+  };
+
+  // Poll for job status
+  useEffect(() => {
+    if (!polling || !job) return;
+    const interval = setInterval(async () => {
+      const res = await fetch(`${API}/api/resourcepacks/conversions/${job.id}`);
+      const updated: ApiConversionJob = await res.json();
+      setJob(updated);
+      if (updated.status !== "IN_PROGRESS" && updated.status !== "PENDING") {
+        setPolling(false);
+        clearInterval(interval);
+
+        // On success, fetch all packs and pick the new one
+        if (updated.status === "COMPLETED") {
+          const all = await fetch(`${API}/api/resourcepacks`).then((r) => r.json() as Promise<ApiResourcePack[]>);
+          const child = all.find(
+            (p) =>
+              p.originalPack?.id === Number(id) &&
+              p.targetVersion === version
+          );
+          setConvertedPack(child ?? null);
+        }
+      }
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [polling, job, id, API, version]);
 
   if (loading) {
     return (
-      // Updated loading state
       <div className="flex items-center justify-center min-h-[60vh] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -99,10 +157,9 @@ export default function PackDetailsPage() {
     );
   }
 
-  const downloadUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${pack.storageFilename}`;
+  const downloadUrl = `${API}/uploads/${pack.storageFilename}`;
 
   return (
-    // Updated main return
     <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden">
       {/* Animated background glows */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -278,6 +335,62 @@ resource-pack-sha1=${hash || ""}`}
                 </span>
               </button>
             </div>
+          </motion.div>
+
+          {/* Conversion Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="minecraft-card p-6 mt-8 space-y-4 border border-emerald-400/20 bg-gradient-to-br from-white/80 to-emerald-50/60 dark:from-gray-900/80 dark:to-emerald-900/40 shadow-md"
+          >
+            <h2 className="text-xl font-semibold text-emerald-700 dark:text-emerald-300">
+              Convert to another version
+            </h2>
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={version}
+                onChange={(e) => setVersion(e.target.value)}
+                className="minecraft-input flex-1"
+                placeholder="e.g. 1.20.1"
+              />
+              <button
+                onClick={startConversion}
+                disabled={!!polling}
+                className="minecraft-button"
+              >
+                {polling ? "Converting…" : "Start Conversion"}
+              </button>
+            </div>
+
+            {job && (
+              <div className="mt-4 space-y-2">
+                <p>
+                  <strong>Job #{job.id}:</strong> {job.status.replace("_", " ")}
+                </p>
+                {job.status === "FAILED" && (
+                  <p className="text-red-500">
+                    Error: {job.errorMessage}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {convertedPack && (
+              <div className="mt-4 p-4 border border-green-300 rounded-lg bg-green-50 dark:bg-green-900/20">
+                <p className="font-medium text-green-700 dark:text-green-300">
+                  Conversion completed! Download:
+                </p>
+                <a
+                  href={`${API}/uploads/${convertedPack.storageFilename}`}
+                  className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+                  download
+                >
+                  <Download className="w-4 h-4" /> {convertedPack.storageFilename}
+                </a>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       </motion.div>

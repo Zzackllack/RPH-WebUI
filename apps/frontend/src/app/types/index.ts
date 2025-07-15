@@ -59,3 +59,30 @@ export interface ApiResourcePack {
   uploadDate: string; // ISO date string
   fileHash?: string;
 }
+
+/**
+ * The shape returned by POST /api/resourcepacks/{id}/convert
+ * and GET  /api/resourcepacks/conversions/{jobId}
+ */
+export interface ApiConversionJob {
+  id: number;
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED";
+  targetVersion: string;
+  createdAt: string;
+  completedAt?: string;
+  errorMessage?: string;
+}
+
+export interface ApiResourcePack {
+  id: number;
+  originalFilename: string;
+  storageFilename: string;
+  size: number; // bytes
+  uploadDate: string; // ISO date string
+
+  /** ONLY present on converted packs */
+  converted?: boolean;
+  targetVersion?: string;
+  /** Only present on converted packs */
+  originalPack?: { id: number };
+}
