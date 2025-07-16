@@ -80,11 +80,17 @@ public class ConverterService {
             String outName = UUID.randomUUID() + ext;
             Path output = outDir.resolve(outName);
 
-            logger.info("Converting pack={} to version={} output={}", orig.getId(), job.getTargetVersion(), output);
+            // TODO: In the future, detect source version from pack.mcmeta or add to API
+            String sourceVersion = "1.19"; // Default assumption for now
+            
+            logger.info("Converting pack={} from version={} to version={} output={}", 
+                       orig.getId(), sourceVersion, job.getTargetVersion(), output);
             Main.main(new String[]{
                 "-i", input.toString(),
                 "-o", output.toString(),
-                "-t", job.getTargetVersion()
+                "--from", sourceVersion,
+                "--to", job.getTargetVersion(),
+                "--debug"
             });
 
             try {
