@@ -31,6 +31,9 @@ public class ConverterService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Value("${conversion.default-source-version:1.19}")
+    private String defaultSourceVersion;
+
     public ConverterService(ResourcePackRepository packRepo,
                             ConversionJobRepository jobRepo,
                             ResourcePackService packService) {
@@ -81,7 +84,7 @@ public class ConverterService {
             Path output = outDir.resolve(outName);
 
             // TODO: In the future, detect source version from pack.mcmeta or add to API
-            String sourceVersion = "1.19"; // Default assumption for now
+            String sourceVersion = defaultSourceVersion; // Configurable default via application properties
             
             logger.info("Converting pack={} from version={} to version={} output={}", 
                        orig.getId(), sourceVersion, job.getTargetVersion(), output);
