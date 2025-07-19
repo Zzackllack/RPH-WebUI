@@ -28,7 +28,7 @@ Note that the backend instead of using jitpack (I may am too stupid to get that 
 ```bash
 cd apps/backend
 mvn install:install-file \
-  -Dfile=path/to/ResourcePackConverter.jar \
+  -Dfile=src/main/resources/ResourcePackConverter.jar \
   -DgroupId=com.agentdid127 \
   -DartifactId=resourcepack-converter \
   -Dversion=2.2.5 \
@@ -41,11 +41,11 @@ mvn install:install-file \
 ```bash
 cd apps\backend
 .\mvnw install:install-file `
-  -Dfile="path/to/ResourcePackConverter.jar" `
-  -DgroupId=com.agentdid127 `
-  -DartifactId=ResourcePackConverter `
-  -Dversion=2.2.5 `
-  -Dpackaging=jar `
+  -Dfile="src/main/resources/ResourcePackConverter.jar" `
+  -DgroupId="com.agentdid127" `
+  -DartifactId="ResourcePackConverter" `
+  -Dversion="2.2.5" `
+  -Dpackaging="jar" `
   -DgeneratePom=true
 ```
 
@@ -54,7 +54,7 @@ cd apps\backend
 ```bash
 cd apps\backend
 .\mvnw install:install-file ^
-  -Dfile="path/to/ResourcePackConverter.jar" ^
+  -Dfile="src/main/resources/ResourcePackConverter.jar" ^
   -DgroupId=com.agentdid127 ^
   -DartifactId=ResourcePackConverter ^
   -Dversion=2.2.5 ^
