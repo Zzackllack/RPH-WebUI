@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,21 +81,38 @@ public class ConverterService {
             String ext = orig.getStorageFilename().substring(orig.getStorageFilename().lastIndexOf('.'));
             Path outDir = Path.of(uploadDir, orig.getId().toString(), job.getTargetVersion());
             Files.createDirectories(outDir);
-            String outName = UUID.randomUUID() + ext;
+            String base = orig.getOriginalFilename();
+            if (base.contains("/")) base = base.substring(base.lastIndexOf('/') + 1);
+            if (base.contains(".")) base = base.substring(0, base.lastIndexOf('.'));
+            String outName = base + "_to_" + job.getTargetVersion() + ext;
             Path output = outDir.resolve(outName);
 
-            // TODO: In the future, detect source version from pack.mcmeta or add to API
-            String sourceVersion = defaultSourceVersion; // Configurable default via application properties
+            String sourceVersion = defaultSourceVersion;
+            if (orig.getMinecraftVersion() != null && !orig.getMinecraftVersion().isBlank()) {
+                sourceVersion = orig.getMinecraftVersion().split(" ")[0];
+            }
             
             logger.info("Converting pack={} from version={} to version={} output={}", 
                        orig.getId(), sourceVersion, job.getTargetVersion(), output);
-            Main.main(new String[]{
-                "-i", input.toString(),
-                "-o", output.toString(),
-                "--from", sourceVersion,
-                "--to", job.getTargetVersion(),
-                "--debug"
-            });
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            java.io.PrintStream ps = new java.io.PrintStream(baos);
+            java.io.PrintStream oldOut = System.out;
+            java.io.PrintStream oldErr = System.err;
+            System.setOut(ps);
+            System.setErr(ps);
+            try {
+                Main.main(new String[]{
+                    "-i", input.toString(),
+                    "-o", output.toString(),
+                    "--from", sourceVersion,
+                    "--to", job.getTargetVersion(),
+                    "--debug"
+                });
+            } finally {
+                System.setOut(oldOut);
+                System.setErr(oldErr);
+                job.setConsoleLog(baos.toString(java.nio.charset.StandardCharsets.UTF_8));
+            }
 
             try {
                 ResourcePack conv = new ResourcePack(

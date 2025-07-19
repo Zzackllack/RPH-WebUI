@@ -36,6 +36,14 @@ public class ResourcePack {
     @Column(name="upload_date", nullable = false)
     private LocalDateTime uploadDate;
 
+    // Detected pack.mcmeta format number
+    @Column(name="pack_format")
+    private Integer packFormat;
+
+    // Human readable Minecraft version derived from pack_format
+    @Column(name="mc_version")
+    private String minecraftVersion;
+
     // ← NEW FIELDS
     @Column(name="is_converted", nullable=false)
     private boolean converted = false;
@@ -105,6 +113,12 @@ public class ResourcePack {
     public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
     }
+
+    public Integer getPackFormat() { return packFormat; }
+    public void setPackFormat(Integer packFormat) { this.packFormat = packFormat; }
+
+    public String getMinecraftVersion() { return minecraftVersion; }
+    public void setMinecraftVersion(String minecraftVersion) { this.minecraftVersion = minecraftVersion; }
 
     public boolean isConverted() { return converted; }
     public void setConverted(boolean converted) { this.converted = converted; }

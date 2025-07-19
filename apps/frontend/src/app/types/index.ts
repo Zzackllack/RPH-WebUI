@@ -57,6 +57,8 @@ export interface ApiResourcePack {
   storageFilename: string;
   size: number; // bytes
   uploadDate: string; // ISO date string
+  packFormat?: number;
+  minecraftVersion?: string;
   fileHash?: string;
 }
 
@@ -71,6 +73,7 @@ export interface ApiConversionJob {
   createdAt: string;
   completedAt?: string;
   errorMessage?: string;
+  consoleLog?: string;
 }
 
 export interface ApiResourcePack {
@@ -79,6 +82,8 @@ export interface ApiResourcePack {
   storageFilename: string;
   size: number; // bytes
   uploadDate: string; // ISO date string
+  packFormat?: number;
+  minecraftVersion?: string;
 
   /** ONLY present on converted packs */
   converted?: boolean;
