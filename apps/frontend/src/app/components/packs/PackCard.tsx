@@ -2,7 +2,7 @@
 
 import { ApiResourcePack } from "@/app/types";
 import { motion } from "framer-motion";
-import { Calendar, Download, HardDrive, Info, Trash2, Sparkles } from "lucide-react";
+import { Calendar, Download, HardDrive, Info, Trash2, SquareStack } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { ZipLogo } from "../ui/ZipLogo";
@@ -92,7 +92,7 @@ export function PackCard({ pack, onDelete }: PackCardProps) {
         </div>
         {pack.minecraftVersion && (
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-            <Sparkles className="w-4 h-4 mr-2 text-purple-500" />
+            <SquareStack className="w-4 h-4 mr-2 text-purple-500" />
             <span>{pack.minecraftVersion}</span>
           </div>
         )}
