@@ -42,9 +42,9 @@ public class CustomErrorController implements ErrorController {
         String path = (String) attrs.getOrDefault("path", request.getRequestURI());
 
         Object statusObj = attrs.get("status");
-        if (statusObj instanceof Integer) status = (Integer) statusObj;
+        if (statusObj instanceof Integer integer) status = integer;
         Object errorObj = attrs.get("error");
-        if (errorObj instanceof String) error = (String) errorObj;
+        if (errorObj instanceof String string) error = string;
         Object msgObj = attrs.get("message");
         if (msgObj instanceof String && !((String)msgObj).isBlank()) message = (String) msgObj;
 
