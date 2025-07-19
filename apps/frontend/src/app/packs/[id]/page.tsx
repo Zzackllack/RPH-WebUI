@@ -374,6 +374,11 @@ resource-pack-sha1=${hash || ""}`}
                     Error: {job.errorMessage}
                   </p>
                 )}
+                {job.consoleLog && (
+                  <pre className="bg-black/5 dark:bg-white/5 p-2 rounded text-xs overflow-x-auto max-h-40">
+                    {job.consoleLog}
+                  </pre>
+                )}
               </div>
             )}
 
