@@ -53,9 +53,11 @@ public class ResourcePack {
 
     @ManyToOne
     @JoinColumn(name="original_pack_id")
+    @com.fasterxml.jackson.annotation.JsonBackReference
     private ResourcePack originalPack;
 
     @OneToMany(mappedBy="originalPack", cascade=CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonManagedReference
     private List<ResourcePack> conversions;
     
     public ResourcePack() {}
