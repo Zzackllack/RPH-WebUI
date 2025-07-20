@@ -2,7 +2,7 @@
 
 import { ApiResourcePack } from "@/app/types";
 import { motion } from "framer-motion";
-import { Calendar, Download, HardDrive, Info, Trash2, SquareStack } from "lucide-react";
+import { Calendar, Download, HardDrive, Info, SquareStack, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { ZipLogo } from "../ui/ZipLogo";

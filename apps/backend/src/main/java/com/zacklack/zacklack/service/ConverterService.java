@@ -120,11 +120,23 @@ public class ConverterService {
                 job.setConsoleLog(baos.toString(java.nio.charset.StandardCharsets.UTF_8));
             }
 
-            Path converted = tempDir.resolve(base + "_converted" + ext);
-            if (Files.exists(converted)) {
+            // Locate the converted file produced by the converter. Because the
+            // input file in the temporary directory uses a generated name, the
+            // converter output will also use that name. We simply search the
+            // temp directory for the first file ending with "_converted" and
+            // the same extension.
+            Path converted = null;
+            try (java.util.stream.Stream<Path> files = Files.list(tempDir)) {
+                converted = files
+                    .filter(p -> p.getFileName().toString().endsWith("_converted" + ext))
+                    .findFirst()
+                    .orElse(null);
+            }
+
+            if (converted != null && Files.exists(converted)) {
                 Files.move(converted, output, StandardCopyOption.REPLACE_EXISTING);
             } else {
-                throw new java.io.IOException("Converted file not found: " + converted);
+                throw new java.io.IOException("Converted file not found in " + tempDir);
             }
 
             // Cleanup temporary directory

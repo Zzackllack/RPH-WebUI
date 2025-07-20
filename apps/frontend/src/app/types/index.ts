@@ -84,6 +84,7 @@ export interface ApiResourcePack {
   uploadDate: string; // ISO date string
   packFormat?: number;
   minecraftVersion?: string;
+  fileHash?: string;
 
   /** ONLY present on converted packs */
   converted?: boolean;

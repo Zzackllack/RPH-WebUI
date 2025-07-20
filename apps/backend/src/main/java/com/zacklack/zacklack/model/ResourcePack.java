@@ -3,6 +3,9 @@ package com.zacklack.zacklack.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,12 +56,16 @@ public class ResourcePack {
 
     @ManyToOne
     @JoinColumn(name="original_pack_id")
-    @com.fasterxml.jackson.annotation.JsonBackReference
+    @JsonBackReference
     private ResourcePack originalPack;
 
     @OneToMany(mappedBy="originalPack", cascade=CascadeType.ALL)
-    @com.fasterxml.jackson.annotation.JsonManagedReference
+    @JsonManagedReference
     private List<ResourcePack> conversions;
+
+    // New: Cascade delete for conversion jobs
+    @OneToMany(mappedBy = "resourcePack", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConversionJob> conversionJobs;
     
     public ResourcePack() {}
 
@@ -133,5 +140,7 @@ public class ResourcePack {
 
     public List<ResourcePack> getConversions() { return conversions; }
     public void setConversions(List<ResourcePack> conversions) { this.conversions = conversions; }
-}
 
+    public List<ConversionJob> getConversionJobs() { return conversionJobs; }
+    public void setConversionJobs(List<ConversionJob> conversionJobs) { this.conversionJobs = conversionJobs; }
+}

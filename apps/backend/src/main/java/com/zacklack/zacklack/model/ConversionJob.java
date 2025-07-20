@@ -19,6 +19,7 @@ public class ConversionJob {
 
     @ManyToOne(optional=false)
     @JoinColumn(name="resource_pack_id")
+    @com.fasterxml.jackson.annotation.JsonBackReference
     private ResourcePack resourcePack;
 
     @Column(name="target_version", nullable=false)

@@ -35,7 +35,6 @@ public class PackFormatUtil {
         Map.entry(32, "1.20.5 - 1.20.6"),
         Map.entry(33, "24w18a - 24w20a"),
         Map.entry(34, "1.21 - 1.21.1"),
-        Map.entry(34, "24w03a - 24w04a"),
         Map.entry(35, "24w33a"),
         Map.entry(36, "24w34a - 24w35a"),
         Map.entry(37, "24w36a"),
