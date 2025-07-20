@@ -66,6 +66,14 @@ pnpm dev
 
 - The frontend connects to the backend API using the `NEXT_PUBLIC_API_URL` environment variable.
 
+If you installed new dependencies via `pnpm`, make sure to run
+
+```bash
+npx pnpm-lock-to-npm-lock pnpm-lock.yaml
+```
+
+to update the `package-lock.json` from `pnpm-lock.yaml` to ensure compatibility with npm and yarn. Which is necessary for the CI/CD pipeline.
+
 ### Code Style
 
 - Follow the existing code style for Java and TypeScript/React.

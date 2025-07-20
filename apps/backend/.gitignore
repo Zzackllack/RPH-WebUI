@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 !ResourcePackConverter.jar
+!**/migration/**
 
 ### STS ###
 .apt_generated
