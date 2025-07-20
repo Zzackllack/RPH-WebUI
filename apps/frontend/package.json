@@ -14,7 +14,7 @@
     "framer-motion": "^12.23.3",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.468.0",
-    "next": "15.4.2",
+    "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.2.9",
@@ -33,6 +33,14 @@
     "wrangler": "^4.24.3"
   },
   "name": "frontend",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild",
+      "sharp",
+      "workerd"
+    ]
+  },
   "private": true,
   "scripts": {
     "build": "next build",
@@ -45,13 +53,5 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "start": "next start"
   },
-  "version": "0.1.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@tailwindcss/oxide",
-      "esbuild",
-      "sharp",
-      "workerd"
-    ]
-  }
+  "version": "0.1.0"
 }

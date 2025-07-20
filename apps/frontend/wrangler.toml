@@ -3,10 +3,6 @@
   compatibility_date = "2025-03-25"
   compatibility_flags = ["nodejs_compat"]
 
-  routes = [
-    { pattern = "rph.zacklack.de", custom_domain = true }
-  ]
-
   [assets]
   directory = ".open-next/assets"
   binding = "ASSETS"
