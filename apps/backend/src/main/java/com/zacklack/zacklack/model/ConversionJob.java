@@ -36,12 +36,23 @@ public class ConversionJob {
     @Column(name="error_message")
     private String errorMessage;
 
+    @Column(name="console_log", columnDefinition = "TEXT")
+    private String consoleLog;
+
     public String getErrorMessage() {
         return errorMessage;
     }
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public String getConsoleLog() {
+        return consoleLog;
+    }
+
+    public void setConsoleLog(String consoleLog) {
+        this.consoleLog = consoleLog;
     }
 
     public LocalDateTime getCompletedAt() {

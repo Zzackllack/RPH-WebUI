@@ -170,6 +170,23 @@ public class ResourcePackService {
         ResourcePack rp = new ResourcePack(
             originalFilename, storageFilename, totalBytes, hashHex, LocalDateTime.now()
         );
+
+        // Detect pack_format from pack.mcmeta
+        try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(target))) {
+            ZipEntry e;
+            while ((e = zis.getNextEntry()) != null) {
+                if (!e.isDirectory() && "pack.mcmeta".equals(e.getName())) {
+                    var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                    var node = mapper.readTree(zis);
+                    int fmt = node.path("pack").path("pack_format").asInt();
+                    rp.setPackFormat(fmt);
+                    rp.setMinecraftVersion(com.zacklack.zacklack.util.PackFormatUtil.getVersionForFormat(fmt));
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            logger.warn("Failed to parse pack.mcmeta for {}: {}", originalFilename, ex.getMessage());
+        }
         ResourcePack saved = repository.save(rp);
         logger.debug("Persisted ResourcePack id={}", saved.getId());
         return saved;
