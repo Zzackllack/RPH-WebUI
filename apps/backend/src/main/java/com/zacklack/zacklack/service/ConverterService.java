@@ -2,6 +2,7 @@ package com.zacklack.zacklack.service;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
@@ -77,7 +78,7 @@ public class ConverterService {
 
         try {
             ResourcePack orig = job.getResourcePack();
-            Path input = Path.of(uploadDir, orig.getStorageFilename());
+            Path inputFile = Path.of(uploadDir, orig.getStorageFilename());
             String ext = orig.getStorageFilename().substring(orig.getStorageFilename().lastIndexOf('.'));
             Path outDir = Path.of(uploadDir, orig.getId().toString(), job.getTargetVersion());
             Files.createDirectories(outDir);
@@ -86,6 +87,12 @@ public class ConverterService {
             if (base.contains(".")) base = base.substring(0, base.lastIndexOf('.'));
             String outName = base + "_to_" + job.getTargetVersion() + ext;
             Path output = outDir.resolve(outName);
+
+            // ResourcePackConverter requires a directory input; copy the pack
+            // into a temporary directory for conversion.
+            Path tempDir = Files.createTempDirectory("rpcv-");
+            Path tempInput = tempDir.resolve(Path.of(orig.getStorageFilename()).getFileName());
+            Files.copy(inputFile, tempInput);
 
             String sourceVersion = defaultSourceVersion;
             if (orig.getMinecraftVersion() != null && !orig.getMinecraftVersion().isBlank()) {
@@ -101,18 +108,28 @@ public class ConverterService {
             System.setOut(ps);
             System.setErr(ps);
             try {
-                Main.main(new String[]{
-                    "-i", input.toString(),
-                    "-o", output.toString(),
+                Main.main(new String[] {
+                    "-i", tempDir.toString(),
                     "--from", sourceVersion,
                     "--to", job.getTargetVersion(),
-                    "--debug"
+                    "--debug", "true"
                 });
             } finally {
                 System.setOut(oldOut);
                 System.setErr(oldErr);
                 job.setConsoleLog(baos.toString(java.nio.charset.StandardCharsets.UTF_8));
             }
+
+            Path converted = tempDir.resolve(base + "_converted" + ext);
+            if (Files.exists(converted)) {
+                Files.move(converted, output, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                throw new java.io.IOException("Converted file not found: " + converted);
+            }
+
+            // Cleanup temporary directory
+            Files.deleteIfExists(tempInput);
+            Files.deleteIfExists(tempDir);
 
             try {
                 ResourcePack conv = new ResourcePack(
