@@ -70,6 +70,25 @@ public class ResourcePackService {
     }
 
     /**
+     * List only original (non-converted) ResourcePacks.
+     */
+    public List<ResourcePack> findAllOriginals() {
+        logger.debug("Listing original ResourcePacks (non-converted)");
+        return repository.findByConvertedFalse();
+    }
+
+    /**
+     * List conversions of a specific ResourcePack.
+     *
+     * @param originalId original pack ID
+     * @return list of converted packs
+     */
+    public List<ResourcePack> findConversions(Long originalId) {
+        logger.debug("Listing conversions for pack id={}", originalId);
+        return repository.findByOriginalPackId(originalId);
+    }
+
+    /**
      * Retrieve a ResourcePack by ID.
      *
      * @param id database ID of the resource pack

@@ -57,7 +57,7 @@ public class ResourcePackController {
     @GetMapping
     public List<ResourcePack> getAllPacks() {
         logger.debug("Fetching all resource packs");
-        return service.findAll();
+        return service.findAllOriginals();
     }
 
     /**
@@ -69,9 +69,20 @@ public class ResourcePackController {
     @GetMapping("/{id}")
     public ResponseEntity<ResourcePack> getPack(@PathVariable Long id) {
         logger.debug("Fetching resource pack with id={}", id);
-        return ResponseEntity.of(
-            service.findAll().stream().filter(p -> p.getId().equals(id)).findFirst()
-        );
+        try {
+            return ResponseEntity.ok(service.findById(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * List converted versions for a given ResourcePack.
+     */
+    @GetMapping("/{id}/conversions")
+    public List<ResourcePack> getConversions(@PathVariable Long id) {
+        logger.debug("Fetching conversions for pack id={}", id);
+        return service.findConversions(id);
     }
 
     /**

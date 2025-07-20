@@ -12,6 +12,7 @@ import HashDisplay from "./components/HashDisplay";
 import Loading from "./components/Loading";
 import PackInfo from "./components/PackInfo";
 import ServerPropertiesSnippet from "./components/ServerPropertiesSnippet";
+import ConvertedList from "./components/ConvertedList";
 
 export default function PackDetailsPage() {
   const { id } = useParams();
@@ -33,6 +34,8 @@ export default function PackDetailsPage() {
   // Converted pack
   const [convertedPack, setConvertedPack] = useState<ApiResourcePack | null>(null);
 
+  const [conversions, setConversions] = useState<ApiResourcePack[]>([]);
+
   const API = process.env.NEXT_PUBLIC_API_URL;
 
   // Load original pack
@@ -47,6 +50,15 @@ export default function PackDetailsPage() {
       .then(setPack)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
+  }, [id, API]);
+
+  // Load existing conversions
+  useEffect(() => {
+    if (!id) return;
+    fetch(`${API}/api/resourcepacks/${id}/conversions`)
+      .then((r) => (r.ok ? r.json() as Promise<ApiResourcePack[]> : []))
+      .then((data) => setConversions(data))
+      .catch(() => {});
   }, [id, API]);
 
   // Load its hash
@@ -91,14 +103,13 @@ export default function PackDetailsPage() {
         setPolling(false);
         clearInterval(interval);
 
-        // On success, fetch all packs and pick the new one
+        // On success, reload conversions
         if (updated.status === "COMPLETED") {
-          const all = await fetch(`${API}/api/resourcepacks`).then((r) => r.json() as Promise<ApiResourcePack[]>);
-          const child = all.find(
-            (p) =>
-              p.originalPack?.id === Number(id) &&
-              p.targetVersion === version
+          const conv = await fetch(`${API}/api/resourcepacks/${id}/conversions`).then(
+            (r) => r.ok ? (r.json() as Promise<ApiResourcePack[]>) : []
           );
+          setConversions(conv);
+          const child = conv.find((p) => p.targetVersion === version);
           setConvertedPack(child ?? null);
         }
       }
@@ -149,6 +160,9 @@ export default function PackDetailsPage() {
 
           {/* server.properties snippet */}
           <ServerPropertiesSnippet url={downloadUrl} hash={hash} />
+
+          {/* Converted versions */}
+          <ConvertedList packs={conversions} API={API ?? ""} />
 
           {/* Conversion Section */}
           <ConversionSection

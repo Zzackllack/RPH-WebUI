@@ -9,5 +9,7 @@ import com.zacklack.zacklack.model.ResourcePack;
 @Repository
 public interface ResourcePackRepository extends JpaRepository<ResourcePack, Long> {
     List<ResourcePack> findByOriginalPackId(Long originalPackId);
+
+    List<ResourcePack> findByConvertedFalse();
 }
 
