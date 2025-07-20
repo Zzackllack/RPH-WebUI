@@ -144,4 +144,3 @@ public class ResourcePack {
     public List<ConversionJob> getConversionJobs() { return conversionJobs; }
     public void setConversionJobs(List<ConversionJob> conversionJobs) { this.conversionJobs = conversionJobs; }
 }
-
