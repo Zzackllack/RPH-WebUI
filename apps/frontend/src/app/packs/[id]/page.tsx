@@ -6,13 +6,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ConversionSection from "./components/ConversionSection";
+import ConvertedList from "./components/ConvertedList";
 import DownloadUrl from "./components/DownloadUrl";
 import ErrorCard from "./components/ErrorCard";
 import HashDisplay from "./components/HashDisplay";
 import Loading from "./components/Loading";
 import PackInfo from "./components/PackInfo";
 import ServerPropertiesSnippet from "./components/ServerPropertiesSnippet";
-import ConvertedList from "./components/ConvertedList";
 
 export default function PackDetailsPage() {
   const { id } = useParams();
@@ -127,7 +127,7 @@ export default function PackDetailsPage() {
   const downloadUrl = `${API}/uploads/${pack.storageFilename}`;
 
   return (
-    <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden">
+    <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden pt-20 pb-20">
       {/* Animated background glows */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
