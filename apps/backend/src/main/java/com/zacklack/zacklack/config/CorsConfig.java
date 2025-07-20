@@ -6,7 +6,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Global CORS configuration to allow front-end applications (e.g. React on localhost:3000)
+ * Global CORS configuration to allow front-end applications (e.g. React on localhost:3000),
+ * all origins, *.zacklack.de domains, and all *.workers.dev domains (including subdomains)
  * to call our REST APIs under /api/**.
  */
 @Configuration
@@ -24,7 +25,15 @@ public class CorsConfig {
             public void addCorsMappings(@org.springframework.lang.NonNull CorsRegistry registry) {
                 registry
                   .addMapping("/api/**")
-                  .allowedOrigins("http://localhost:3000")
+                  .allowedOriginPatterns(
+                      "*",
+                      "*.zacklack.de",
+                      "https://*.zacklack.de",
+                      "http://*.zacklack.de",
+                      "*.workers.dev",
+                      "https://*.workers.dev",
+                      "http://*.workers.dev"
+                  )
                   .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                   .allowedHeaders("*")
                   .allowCredentials(true);
