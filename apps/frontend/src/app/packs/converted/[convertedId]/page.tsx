@@ -1,16 +1,17 @@
 "use client";
 
+import { ZipLogo } from "@/app/components/ui/ZipLogo";
 import type { ApiResourcePack } from "@/app/types";
+import { X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
 import DownloadUrl from "../../[id]/components/DownloadUrl";
+import ErrorCard from "../../[id]/components/ErrorCard";
 import HashDisplay from "../../[id]/components/HashDisplay";
+import Loading from "../../[id]/components/Loading";
 import PackInfo from "../../[id]/components/PackInfo";
 import ServerPropertiesSnippet from "../../[id]/components/ServerPropertiesSnippet";
-import Loading from "../../[id]/components/Loading";
-import ErrorCard from "../../[id]/components/ErrorCard";
-import { ZipLogo } from "@/app/components/ui/ZipLogo";
+import NonConvertedPackAccessError from "./components/NonConvertedPackAccessError";
 
 export default function ConvertedPackDetailsPage() {
     const { convertedId } = useParams();
@@ -26,7 +27,7 @@ export default function ConvertedPackDetailsPage() {
     useEffect(() => {
         if (!convertedId) return;
         setLoading(true);
-        fetch(`${API}/api/resourcepacks/conversions/${convertedId}`)
+        fetch(`${API}/api/resourcepacks/${convertedId}`)
             .then((r) => {
                 if (!r.ok) throw new Error(`HTTP ${r.status}`);
                 return r.json() as Promise<ApiResourcePack>;
@@ -39,7 +40,7 @@ export default function ConvertedPackDetailsPage() {
     useEffect(() => {
         if (!convertedId) return;
         setHashLoading(true);
-        fetch(`${API}/api/resourcepacks/conversions/${convertedId}/hash`)
+        fetch(`${API}/api/resourcepacks/${convertedId}/hash`)
             .then((r) => {
                 if (!r.ok) throw new Error(`HTTP ${r.status}`);
                 return r.text();
@@ -50,11 +51,25 @@ export default function ConvertedPackDetailsPage() {
     }, [convertedId, API]);
 
     if (loading) return <Loading />;
-    if (error || !pack)
+    if (error || !pack) {
         return <ErrorCard error={error ?? "Converted pack not found"} />;
+    }
+
+    // Only show error and log once after fetch completes and pack is confirmed non-converted
+    if (!pack.converted) {
+        // Use a ref to ensure logging only happens once
+        const hasLoggedRef = (window as any)._rphPack403LoggedRef ?? false;
+        if (typeof window !== "undefined" && !hasLoggedRef) {
+            window.history.replaceState({}, "", window.location.href);
+            console.error(
+                "Error 403: Non-converted pack accessed on converted pack page."
+            );
+            (window as any)._rphPack403LoggedRef = true;
+        }
+        return <NonConvertedPackAccessError errorCode="PACK403-NONCONVERTED" />;
+    }
 
     const downloadUrl = `${API}/uploads/${pack.storageFilename}`;
-
     return (
         <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden pt-20 pb-20">
             <div className="absolute inset-0 pointer-events-none z-0">

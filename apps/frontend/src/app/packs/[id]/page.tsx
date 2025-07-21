@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ConversionSection from "./components/ConversionSection";
+import ConvertedPackAccessError from "./components/ConvertedPackAccessError";
 import ConvertedPacksSection from "./components/ConvertedPacksSection";
 import DownloadUrl from "./components/DownloadUrl";
 import ErrorCard from "./components/ErrorCard";
@@ -133,8 +134,27 @@ export default function PackDetailsPage() {
         return <ErrorCard error={error ?? "Pack not found"} />;
     }
 
+    // If pack is converted, show scary error and set 403 status
+    if (pack.converted) {
+        if (typeof window !== "undefined") {
+            console.error(
+                "[403] Forbidden: Attempted to access converted pack page",
+                { id }
+            );
+            const meta = document.createElement("meta");
+            meta.httpEquiv = "status";
+            meta.content = "403 Forbidden";
+            document.head.appendChild(meta);
+        }
+        return (
+            <ConvertedPackAccessError errorCode={`RPH-403-CONVERTED-${id}`} />
+        );
+    }
+
     const downloadUrl = `${API}/uploads/${pack.storageFilename}`;
 
+    // Dynamic layout: if conversions exist, use grid with details left and conversions right; else, center details and make it larger
+    const hasConversions = conversions && conversions.length > 0;
     return (
         <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden pt-20 pb-20">
             {/* Animated background glows */}
@@ -153,48 +173,72 @@ export default function PackDetailsPage() {
                     <X className="w-4 h-4" /> Back to all packs
                 </Link>
 
-                <div className="flex flex-col md:flex-row gap-8">
-                    {/* Left: Pack Details */}
-                    <div className="flex-1 min-w-0">
-                        <div className="minecraft-card p-8 space-y-8 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80">
-                            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-primary via-emerald-600 to-green-600 bg-clip-text drop-shadow-glow">
-                                {pack.originalFilename}
-                            </h1>
-
-                            {/* Pack Info Section */}
-                            <PackInfo pack={pack} />
-
-                            {/* Download URL */}
-                            <DownloadUrl url={downloadUrl} />
-
-                            {/* SHA-256 Hash */}
-                            <HashDisplay hash={hash} loading={hashLoading} />
-
-                            {/* server.properties snippet */}
-                            <ServerPropertiesSnippet
-                                url={downloadUrl}
-                                hash={hash}
-                            />
-
-                            {/* Conversion Section */}
-                            <ConversionSection
-                                version={version}
-                                setVersion={setVersion}
-                                polling={polling}
-                                startConversion={startConversion}
-                                job={job}
-                                convertedPack={convertedPack}
-                                conversions={conversions}
-                                API={API ?? ""}
-                            />
+                {hasConversions ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Left: Pack Details, smaller and left-aligned */}
+                        <div className="col-span-1">
+                            <div className="minecraft-card p-6 md:p-8 space-y-8 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80">
+                                <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-primary via-emerald-600 to-green-600 bg-clip-text drop-shadow-glow">
+                                    {pack.originalFilename}
+                                </h1>
+                                <PackInfo pack={pack} />
+                                <DownloadUrl url={downloadUrl} />
+                                <HashDisplay
+                                    hash={hash}
+                                    loading={hashLoading}
+                                />
+                                <ServerPropertiesSnippet
+                                    url={downloadUrl}
+                                    hash={hash}
+                                />
+                                <ConversionSection
+                                    version={version}
+                                    setVersion={setVersion}
+                                    polling={polling}
+                                    startConversion={startConversion}
+                                    job={job}
+                                    convertedPack={convertedPack}
+                                    conversions={conversions}
+                                    API={API ?? ""}
+                                />
+                            </div>
+                        </div>
+                        {/* Right: Converted Packs Section */}
+                        <div className="col-span-1 flex items-start justify-center">
+                            <ConvertedPacksSection packs={conversions} />
                         </div>
                     </div>
-
-                    {/* Right: Converted Packs Section */}
-                    <div className="flex-1 min-w-0">
-                        <ConvertedPacksSection packs={conversions} />
+                ) : (
+                    <div className="flex items-center justify-center min-h-[60vh]">
+                        <div className="w-full max-w-2xl mx-auto">
+                            <div className="minecraft-card p-10 md:p-16 space-y-10 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80">
+                                <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-primary via-emerald-600 to-green-600 bg-clip-text drop-shadow-glow text-center">
+                                    {pack.originalFilename}
+                                </h1>
+                                <PackInfo pack={pack} />
+                                <DownloadUrl url={downloadUrl} />
+                                <HashDisplay
+                                    hash={hash}
+                                    loading={hashLoading}
+                                />
+                                <ServerPropertiesSnippet
+                                    url={downloadUrl}
+                                    hash={hash}
+                                />
+                                <ConversionSection
+                                    version={version}
+                                    setVersion={setVersion}
+                                    polling={polling}
+                                    startConversion={startConversion}
+                                    job={job}
+                                    convertedPack={convertedPack}
+                                    conversions={conversions}
+                                    API={API ?? ""}
+                                />
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );
