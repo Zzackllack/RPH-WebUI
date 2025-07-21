@@ -1,7 +1,6 @@
 package com.zacklack.zacklack.config;
 
 import java.nio.file.Paths;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -23,16 +22,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * @param registry ResourceHandlerRegistry to configure handlers
      */
     @Override
-    public void addResourceHandlers(@org.springframework.lang.NonNull ResourceHandlerRegistry registry) {
-        String absolutePath = Paths
-            .get(uploadDir)
+    public void addResourceHandlers(
+        @org.springframework.lang.NonNull ResourceHandlerRegistry registry
+    ) {
+        String absolutePath = Paths.get(uploadDir)
             .toAbsolutePath()
             .toUri()
             .toString();
 
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(absolutePath)
-                .setCachePeriod(3600)
-                .resourceChain(true);
+        registry
+            .addResourceHandler("/uploads/**")
+            .addResourceLocations(absolutePath)
+            .setCachePeriod(3600)
+            .resourceChain(true);
     }
 }

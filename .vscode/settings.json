@@ -1,5 +1,5 @@
 {
-  "biome.enabled": true,
+  "biome.enabled": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
@@ -8,6 +8,9 @@
   "eslint.validate": [],
   "extensions.ignoreRecommendations": false,
   "java.compile.nullAnalysis.mode": "automatic",
+  "java.completion.importOrder": [
+    "#"
+  ],
   "java.configuration.updateBuildConfiguration": "automatic",
   "prettier.enable": false,
   "prettier.requireConfig": false

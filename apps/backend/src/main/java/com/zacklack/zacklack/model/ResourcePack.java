@@ -1,11 +1,7 @@
 package com.zacklack.zacklack.model;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,60 +12,73 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "resource_packs")
 public class ResourcePack {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="original_filename", nullable = false)
+    @Column(name = "original_filename", nullable = false)
     private String originalFilename;
 
-    @Column(name="storage_filename", nullable = false, unique = true)
+    @Column(name = "storage_filename", nullable = false, unique = true)
     private String storageFilename;
 
     @Column(nullable = false)
     private Long size;
 
-    @Column(name="file_hash", nullable = false, length = 64)
+    @Column(name = "file_hash", nullable = false, length = 64)
     private String fileHash;
 
-    @Column(name="upload_date", nullable = false)
+    @Column(name = "upload_date", nullable = false)
     private LocalDateTime uploadDate;
 
     // Detected pack.mcmeta format number
-    @Column(name="pack_format")
+    @Column(name = "pack_format")
     private Integer packFormat;
 
     // Human readable Minecraft version derived from pack_format
-    @Column(name="mc_version")
+    @Column(name = "mc_version")
     private String minecraftVersion;
 
     // ← NEW FIELDS
-    @Column(name="is_converted", nullable=false)
+    @Column(name = "is_converted", nullable = false)
     private boolean converted = false;
 
-    @Column(name="target_version")
+    @Column(name = "target_version")
     private String targetVersion;
 
     @ManyToOne
-    @JoinColumn(name="original_pack_id")
+    @JoinColumn(name = "original_pack_id")
     @JsonBackReference
     private ResourcePack originalPack;
 
-    @OneToMany(mappedBy="originalPack", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "originalPack", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ResourcePack> conversions;
 
     // New: Cascade delete for conversion jobs
-    @OneToMany(mappedBy = "resourcePack", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "resourcePack",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     private List<ConversionJob> conversionJobs;
-    
+
     public ResourcePack() {}
 
-    public ResourcePack(String originalFilename, String storageFilename, Long size, String fileHash, LocalDateTime uploadDate) {
+    public ResourcePack(
+        String originalFilename,
+        String storageFilename,
+        Long size,
+        String fileHash,
+        LocalDateTime uploadDate
+    ) {
         this.originalFilename = originalFilename;
         this.storageFilename = storageFilename;
         this.size = size;
@@ -123,24 +132,59 @@ public class ResourcePack {
         this.uploadDate = uploadDate;
     }
 
-    public Integer getPackFormat() { return packFormat; }
-    public void setPackFormat(Integer packFormat) { this.packFormat = packFormat; }
+    public Integer getPackFormat() {
+        return packFormat;
+    }
 
-    public String getMinecraftVersion() { return minecraftVersion; }
-    public void setMinecraftVersion(String minecraftVersion) { this.minecraftVersion = minecraftVersion; }
+    public void setPackFormat(Integer packFormat) {
+        this.packFormat = packFormat;
+    }
 
-    public boolean isConverted() { return converted; }
-    public void setConverted(boolean converted) { this.converted = converted; }
+    public String getMinecraftVersion() {
+        return minecraftVersion;
+    }
 
-    public String getTargetVersion() { return targetVersion; }
-    public void setTargetVersion(String targetVersion) { this.targetVersion = targetVersion; }
+    public void setMinecraftVersion(String minecraftVersion) {
+        this.minecraftVersion = minecraftVersion;
+    }
 
-    public ResourcePack getOriginalPack() { return originalPack; }
-    public void setOriginalPack(ResourcePack originalPack) { this.originalPack = originalPack; }
+    public boolean isConverted() {
+        return converted;
+    }
 
-    public List<ResourcePack> getConversions() { return conversions; }
-    public void setConversions(List<ResourcePack> conversions) { this.conversions = conversions; }
+    public void setConverted(boolean converted) {
+        this.converted = converted;
+    }
 
-    public List<ConversionJob> getConversionJobs() { return conversionJobs; }
-    public void setConversionJobs(List<ConversionJob> conversionJobs) { this.conversionJobs = conversionJobs; }
+    public String getTargetVersion() {
+        return targetVersion;
+    }
+
+    public void setTargetVersion(String targetVersion) {
+        this.targetVersion = targetVersion;
+    }
+
+    public ResourcePack getOriginalPack() {
+        return originalPack;
+    }
+
+    public void setOriginalPack(ResourcePack originalPack) {
+        this.originalPack = originalPack;
+    }
+
+    public List<ResourcePack> getConversions() {
+        return conversions;
+    }
+
+    public void setConversions(List<ResourcePack> conversions) {
+        this.conversions = conversions;
+    }
+
+    public List<ConversionJob> getConversionJobs() {
+        return conversionJobs;
+    }
+
+    public void setConversionJobs(List<ConversionJob> conversionJobs) {
+        this.conversionJobs = conversionJobs;
+    }
 }

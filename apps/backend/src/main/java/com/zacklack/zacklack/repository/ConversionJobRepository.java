@@ -1,7 +1,7 @@
 package com.zacklack.zacklack.repository;
 
+import com.zacklack.zacklack.model.ConversionJob;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.zacklack.zacklack.model.ConversionJob;
-
-public interface ConversionJobRepository extends JpaRepository<ConversionJob, Long> { }
+public interface ConversionJobRepository
+    extends JpaRepository<ConversionJob, Long> {}

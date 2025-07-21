@@ -1,11 +1,16 @@
 package com.zacklack.zacklack.controller;
 
+import com.zacklack.zacklack.model.ConversionJob;
+import com.zacklack.zacklack.model.ResourcePack;
+import com.zacklack.zacklack.repository.ConversionJobRepository;
+import com.zacklack.zacklack.service.ConverterService;
+import com.zacklack.zacklack.service.ResourcePackService;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-
 import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.zacklack.zacklack.model.ConversionJob;
-import com.zacklack.zacklack.model.ResourcePack;
-import com.zacklack.zacklack.repository.ConversionJobRepository;
-import com.zacklack.zacklack.service.ConverterService;
-import com.zacklack.zacklack.service.ResourcePackService;
-
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
  * REST controller exposing CRUD and conversion endpoints for ResourcePacks.
  */
@@ -35,15 +32,19 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/api/resourcepacks")
 public class ResourcePackController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourcePackController.class);
+    private static final Logger logger = LoggerFactory.getLogger(
+        ResourcePackController.class
+    );
 
     private final ResourcePackService service;
     private final ConverterService converterService;
     private final ConversionJobRepository conversionJobRepository;
 
-    public ResourcePackController(ResourcePackService service,
-                                  ConverterService converterService,
-                                  ConversionJobRepository conversionJobRepository) {
+    public ResourcePackController(
+        ResourcePackService service,
+        ConverterService converterService,
+        ConversionJobRepository conversionJobRepository
+    ) {
         this.service = service;
         this.converterService = converterService;
         this.conversionJobRepository = conversionJobRepository;
@@ -113,30 +114,48 @@ public class ResourcePackController {
      */
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ResourcePack> uploadPack(
-            @RequestParam("file") MultipartFile file,
-            HttpServletRequest request,
-            @RequestHeader(value = "User-Agent", required = false) String userAgent
+        @RequestParam("file") MultipartFile file,
+        HttpServletRequest request,
+        @RequestHeader(value = "User-Agent", required = false) String userAgent
     ) throws NoSuchAlgorithmException {
         String clientIp = request.getRemoteAddr();
-        logger.info("[UPLOAD] Start: filename={}, size={} bytes, clientIp={}, userAgent={}",
-            file.getOriginalFilename(), file.getSize(), clientIp, userAgent);
+        logger.info(
+            "[UPLOAD] Start: filename={}, size={} bytes, clientIp={}, userAgent={}",
+            file.getOriginalFilename(),
+            file.getSize(),
+            clientIp,
+            userAgent
+        );
 
         try {
             ResourcePack saved = service.store(file, request);
-            logger.info("[UPLOAD] Success: saved pack id={} ({} bytes)",
-                saved.getId(), saved.getSize());
+            logger.info(
+                "[UPLOAD] Success: saved pack id={} ({} bytes)",
+                saved.getId(),
+                saved.getSize()
+            );
             return ResponseEntity.status(201).body(saved);
-
         } catch (EOFException | ClientAbortException | SocketException e) {
-            logger.warn("[UPLOAD] Client aborted during upload: {} — {}", file.getOriginalFilename(), e.getMessage());
+            logger.warn(
+                "[UPLOAD] Client aborted during upload: {} — {}",
+                file.getOriginalFilename(),
+                e.getMessage()
+            );
             return ResponseEntity.status(204).build();
-
         } catch (IOException e) {
-            logger.error("[UPLOAD] I/O error storing file {}: {}", file.getOriginalFilename(), e.getMessage(), e);
+            logger.error(
+                "[UPLOAD] I/O error storing file {}: {}",
+                file.getOriginalFilename(),
+                e.getMessage(),
+                e
+            );
             return ResponseEntity.status(500).build();
-
         } catch (RuntimeException e) {
-            logger.error("[UPLOAD] Unexpected runtime error: {}", e.getMessage(), e);
+            logger.error(
+                "[UPLOAD] Unexpected runtime error: {}",
+                e.getMessage(),
+                e
+            );
             return ResponseEntity.status(500).build();
         }
     }
@@ -166,7 +185,11 @@ public class ResourcePackController {
         @PathVariable Long id,
         @RequestParam("version") String version
     ) {
-        logger.info("Creating conversion job for pack={} to version={}", id, version);
+        logger.info(
+            "Creating conversion job for pack={} to version={}",
+            id,
+            version
+        );
         ConversionJob job = converterService.createJob(id, version);
         converterService.runConversion(job.getId());
         return ResponseEntity.accepted().body(job);

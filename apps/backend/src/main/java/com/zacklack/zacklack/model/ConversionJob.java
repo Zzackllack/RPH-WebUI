@@ -1,7 +1,5 @@
 package com.zacklack.zacklack.model;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,34 +8,37 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "conversion_jobs")
 public class ConversionJob {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional=false)
-    @JoinColumn(name="resource_pack_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "resource_pack_id")
     @com.fasterxml.jackson.annotation.JsonBackReference
     private ResourcePack resourcePack;
 
-    @Column(name="target_version", nullable=false)
+    @Column(name = "target_version", nullable = false)
     private String targetVersion;
 
-    @Column(nullable=false)
-    private String status;  // PENDING, IN_PROGRESS, COMPLETED, FAILED
+    @Column(nullable = false)
+    private String status; // PENDING, IN_PROGRESS, COMPLETED, FAILED
 
-    @Column(name="created_at", nullable=false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name="completed_at")
+    @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
-    @Column(name="error_message")
+    @Column(name = "error_message")
     private String errorMessage;
 
-    @Column(name="console_log", columnDefinition = "TEXT")
+    @Column(name = "console_log", columnDefinition = "TEXT")
     private String consoleLog;
 
     public String getErrorMessage() {
@@ -103,5 +104,4 @@ public class ConversionJob {
     public void setTargetVersion(String targetVersion) {
         this.targetVersion = targetVersion;
     }
-
 }

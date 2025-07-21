@@ -1,7 +1,7 @@
 package com.zacklack.zacklack.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
  * Custom error controller to render a styled error page for /error.
  */
 @Controller
 public class CustomErrorController implements ErrorController {
-    private static final Logger logger = LoggerFactory.getLogger(CustomErrorController.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(
+        CustomErrorController.class
+    );
 
     private final ErrorAttributes errorAttributes;
 
@@ -34,21 +35,34 @@ public class CustomErrorController implements ErrorController {
     @RequestMapping(value = "/error", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView handleErrorHtml(HttpServletRequest request) {
         ServletWebRequest webRequest = new ServletWebRequest(request);
-        Map<String, Object> attrs = errorAttributes.getErrorAttributes(webRequest, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
+        Map<String, Object> attrs = errorAttributes.getErrorAttributes(
+            webRequest,
+            ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE)
+        );
 
         int status = 500;
         String error = "Unknown Error";
         String message = "An unexpected error occurred.";
-        String path = (String) attrs.getOrDefault("path", request.getRequestURI());
+        String path = (String) attrs.getOrDefault(
+            "path",
+            request.getRequestURI()
+        );
 
         Object statusObj = attrs.get("status");
         if (statusObj instanceof Integer integer) status = integer;
         Object errorObj = attrs.get("error");
         if (errorObj instanceof String string) error = string;
         Object msgObj = attrs.get("message");
-        if (msgObj instanceof String && !((String)msgObj).isBlank()) message = (String) msgObj;
+        if (msgObj instanceof String && !((String) msgObj).isBlank()) message =
+            (String) msgObj;
 
-        logger.warn("Custom error page: status={} error={} message={} path={}", status, error, message, path);
+        logger.warn(
+            "Custom error page: status={} error={} message={} path={}",
+            status,
+            error,
+            message,
+            path
+        );
 
         ModelAndView mav = new ModelAndView("error");
         mav.addObject("status", status);

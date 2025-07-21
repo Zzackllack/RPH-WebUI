@@ -22,21 +22,23 @@ public class CorsConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(@org.springframework.lang.NonNull CorsRegistry registry) {
+            public void addCorsMappings(
+                @org.springframework.lang.NonNull CorsRegistry registry
+            ) {
                 registry
-                  .addMapping("/api/**")
-                  .allowedOriginPatterns(
-                      "*",
-                      "*.zacklack.de",
-                      "https://*.zacklack.de",
-                      "http://*.zacklack.de",
-                      "*.workers.dev",
-                      "https://*.workers.dev",
-                      "http://*.workers.dev"
-                  )
-                  .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                  .allowedHeaders("*")
-                  .allowCredentials(true);
+                    .addMapping("/api/**")
+                    .allowedOriginPatterns(
+                        "*",
+                        "*.zacklack.de",
+                        "https://*.zacklack.de",
+                        "http://*.zacklack.de",
+                        "*.workers.dev",
+                        "https://*.workers.dev",
+                        "http://*.workers.dev"
+                    )
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
             }
         };
     }

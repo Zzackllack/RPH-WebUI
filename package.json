@@ -14,10 +14,11 @@
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.3.0",
     "prettier": "^3.6.2",
+    "prettier-plugin-java": "^2.7.3",
     "typescript-eslint": "^8.38.0"
   },
   "scripts": {
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,java}\"",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings=0"
   }
 }
