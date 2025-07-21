@@ -39,5 +39,8 @@ EXPOSE 8080
 # Add all additional from application.properties or application.yml here
 ENV SPRING_PROFILES_ACTIVE=prod
 
+# Declare a volume for persistent uploads
+VOLUME ["/app/uploads"]
+
 # Run the Spring Boot application
 ENTRYPOINT ["java","-jar","/app/app.jar"]
