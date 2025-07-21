@@ -12,36 +12,36 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RPH-WebUI",
-  description:
-    "Host, share, and use your Minecraft ressource packs on your server",
-  keywords: ["minecraft", "resource packs", "textures", "mods", "gaming"],
-  authors: [{ name: "Zacklack", url: "https://zacklack.de" }],
+    title: "RPH-WebUI",
+    description:
+        "Host, share, and use your Minecraft ressource packs on your server",
+    keywords: ["minecraft", "resource packs", "textures", "mods", "gaming"],
+    authors: [{ name: "Zacklack", url: "https://zacklack.de" }],
 };
 
 export const viewport = {
-  width: "device-width",
-  initialScale: 1,
+    width: "device-width",
+    initialScale: 1,
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${inter.className} antialiased`}>
-        <ThemeProvider>
-          <AuthProvider>
-            <ToastProvider>
-              <Header />
-              {children}
-              <Footer />
-            </ToastProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" className="scroll-smooth">
+            <body className={`${inter.className} antialiased`}>
+                <ThemeProvider>
+                    <AuthProvider>
+                        <ToastProvider>
+                            <Header />
+                            {children}
+                            <Footer />
+                        </ToastProvider>
+                    </AuthProvider>
+                </ThemeProvider>
+            </body>
+        </html>
+    );
 }
