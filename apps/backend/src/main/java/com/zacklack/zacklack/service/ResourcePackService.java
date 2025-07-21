@@ -1,10 +1,5 @@
 package com.zacklack.zacklack.service;
 
-import com.zacklack.zacklack.exception.InvalidPackException;
-import com.zacklack.zacklack.model.ResourcePack;
-import com.zacklack.zacklack.repository.ResourcePackRepository;
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -19,11 +14,19 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.zacklack.zacklack.exception.InvalidPackException;
+import com.zacklack.zacklack.model.ResourcePack;
+import com.zacklack.zacklack.repository.ResourcePackRepository;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Handles validation, storage, retrieval and deletion of ResourcePack files.
@@ -104,10 +107,10 @@ public class ResourcePackService {
     }
 
     /**
-     * Get the stored file SHA-256 hash for a pack.
+     * Get the stored file SHA-1 hash for a pack.
      *
      * @param id pack ID
-     * @return hex-encoded SHA-256 hash
+     * @return hex-encoded SHA-1 hash
      */
     public String findHashById(Long id) {
         ResourcePack rp = findById(id);
@@ -165,12 +168,12 @@ public class ResourcePackService {
     }
 
     /**
-     * Store the uploaded file to disk, compute its SHA-256 hash and persist metadata.
+     * Store the uploaded file to disk, compute its SHA-1 hash and persist metadata.
      *
      * @param file uploaded ZIP
      * @return persisted ResourcePack entity
      * @throws IOException if storage fails
-     * @throws NoSuchAlgorithmException if SHA-256 unsupported (won’t happen)
+     * @throws NoSuchAlgorithmException if SHA-1 unsupported (won’t happen)
      */
     public ResourcePack store(MultipartFile file, HttpServletRequest request)
         throws IOException, NoSuchAlgorithmException {
@@ -183,7 +186,7 @@ public class ResourcePackService {
             request != null ? request.getHeader("User-Agent") : "unknown"
         );
 
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance("SHA-1");
         String originalFilename = file.getOriginalFilename();
         String ext = (originalFilename != null &&
                 originalFilename.contains("."))
