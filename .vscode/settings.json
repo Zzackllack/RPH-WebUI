@@ -1,16 +1,14 @@
 {
   "biome.enabled": true,
-  "editor.defaultFormatter": "biomejs.biome",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnPaste": true,
-  // BiomeJS is the only formatter/linter enabled for this workspace.
-  // Prettier and ESLint are intentionally disabled.
   "editor.formatOnSave": true,
   "editor.formatOnType": true,
   "eslint.enable": false,
   "eslint.validate": [],
   "extensions.ignoreRecommendations": false,
-  "prettier.enable": false,
-  "prettier.requireConfig": false,
+  "java.compile.nullAnalysis.mode": "automatic",
   "java.configuration.updateBuildConfiguration": "automatic",
-  "java.compile.nullAnalysis.mode": "automatic"
+  "prettier.enable": false,
+  "prettier.requireConfig": false
 }

@@ -7,7 +7,17 @@
     "react-dropzone": "^14.3.8"
   },
   "devDependencies": {
-    "eslint-config-prettier": "^10.1.5",
-    "prettier": "3.6.2"
+    "@eslint/js": "^9.31.0",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.3.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.38.0"
+  },
+  "scripts": {
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings=0"
   }
 }
