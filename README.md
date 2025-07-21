@@ -112,13 +112,27 @@ The frontend will connect to the backend API using the `NEXT_PUBLIC_API_URL` env
 
 ## Features
 
-- User authentication (demo credentials configurable via environment)
-- Upload, manage, and download Minecraft resource packs
-- Dashboard for pack management and statistics (currently WIP)
-- Asynchronous conversion jobs (via backend, currently WIP)
-- Responsive, modern UI with Tailwind CSS
-- Error handling and toast notifications
-- Secure file handling and validation
+## Code Quality Scripts
+
+This project provides scripts for code formatting and linting to ensure code quality and consistency across the codebase. All contributors and AI agents should use these scripts before submitting changes:
+
+### Format
+
+Formats all supported files (JavaScript, TypeScript, CSS, Java) using Prettier:
+
+```bash
+pnpm run format
+```
+
+### Lint
+
+Lints frontend source files using ESLint and the project's configuration:
+
+```bash
+pnpm run lint
+```
+
+Please run these scripts before committing or opening a pull request to ensure your code meets project standards.
 
 ## Contributing
 

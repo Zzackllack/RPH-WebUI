@@ -37,6 +37,20 @@ else
     echo "pnpm is already installed: $(pnpm -v)"
 fi
 
+# Install global npm packages
+echo "Installing global npm packages..."
+ls
+echo "Installing global npm packages: eslint, prettier, typescript, @typescript-eslint/parser, @typescript-eslint/eslint-plugin"
+if [ -n "$CODEX_PROXY_CERT" ] && [ -n "$http_proxy" ]; then
+    echo "Using Codex proxy settings for pnpm..."
+    pnpm config set cafile "$CODEX_PROXY_CERT"
+    pnpm config set proxy "$http_proxy"
+    pnpm config set https-proxy "$https_proxy"
+    pnpm config set strict-ssl true
+fi
+pnpm install
+echo "Global npm packages installed successfully."
+
 # Setup Frontend
 echo "Setting up Frontend..."
 cd apps/frontend || exit

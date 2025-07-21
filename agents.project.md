@@ -26,6 +26,26 @@ This repository is a full-stack Minecraft Resource Pack Hosting Platform, consis
 - Backend: See `agents.backend.md` for Java/Spring Boot conventions.
 - Frontend: See `agents.frontend.md` for Next.js/React/TypeScript conventions.
 
+## Code Quality Scripts
+
+All contributors and AI agents should use the following scripts before submitting changes to any part of the project:
+
+### Format
+
+Formats all supported files (Java, JavaScript, TypeScript, CSS) using Prettier:
+
+```bash
+pnpm run format
+```
+
+### Lint
+
+Lints frontend source files using ESLint:
+
+```bash
+pnpm run lint
+```
+
 ## Build & Run
 
 - See individual agents.md files for build/run/test instructions for each app.

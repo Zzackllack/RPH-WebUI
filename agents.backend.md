@@ -24,6 +24,26 @@ This is the Java Spring Boot REST API for Minecraft Resource Pack management, fi
 - `mvnw`, `mvnw.cmd` — Maven wrapper scripts
 - `ResourcePackConverter.jar` — External dependency for resource pack conversion
 
+## Code Quality Scripts
+
+All contributors and AI agents should use the following scripts before submitting changes to the backend:
+
+### Format
+
+Formats all supported files (Java, JavaScript, TypeScript, CSS) using Prettier:
+
+```bash
+pnpm run format
+```
+
+### Lint
+
+Lints frontend source files using ESLint:
+
+```bash
+pnpm run lint
+```
+
 ## Build & Run
 
 - **Install ResourcePackConverter JAR:**

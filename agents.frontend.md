@@ -27,6 +27,26 @@ This is the Next.js/React/TypeScript web UI for Minecraft Resource Pack Hosting.
 - `tailwind.config.ts` — Tailwind configuration
 - `package.json` — Project dependencies and scripts
 
+## Code Quality Scripts
+
+All contributors and AI agents should use the following scripts before submitting changes to the frontend:
+
+### Format
+
+Formats all supported files (JavaScript, TypeScript, CSS) using Prettier:
+
+```bash
+pnpm run format
+```
+
+### Lint
+
+Lints frontend source files using ESLint:
+
+```bash
+pnpm run lint
+```
+
 ## Build & Run
 
 - **Install dependencies:**

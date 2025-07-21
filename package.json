@@ -19,6 +19,6 @@
   },
   "scripts": {
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,java}\"",
-    "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings=0"
+    "lint": "eslint --config eslint.config.mjs \"apps/frontend/src/**/*.{js,jsx,ts,tsx}\" --max-warnings=0"
   }
 }

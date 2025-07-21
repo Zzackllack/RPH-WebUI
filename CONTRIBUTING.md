@@ -31,11 +31,45 @@ Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
    - **Frontend:** `apps/frontend` (Next.js/React/TypeScript)
 4. Write or update tests as needed.
 5. Update documentation if your changes affect usage or setup.
-6. Commit your changes (`git commit -m 'Add amazing feature'`).
-7. Push to your branch (`git push origin feature/amazing-feature`).
-8. Open a Pull Request.
+6. Before committing, run the code quality scripts to ensure your changes meet project standards:
+
+   - Format code:
+
+     ```bash
+     pnpm run format
+     ```
+
+   - Lint code:
+
+     ```bash
+     pnpm run lint
+     ```
+
+7. Commit your changes (`git commit -m 'Add amazing feature'`).
+8. Push to your branch (`git push origin feature/amazing-feature`).
+9. Open a Pull Request.
 
 ### Development Setup
+
+## Code Quality Scripts
+
+All contributors and AI agents should use the following scripts before submitting changes:
+
+### Format
+
+Formats all supported files (JavaScript, TypeScript, CSS, Java) using Prettier:
+
+```bash
+pnpm run format
+```
+
+### Lint
+
+Lints frontend source files using ESLint and the project's configuration:
+
+```bash
+pnpm run lint
+```
 
 #### Backend (Spring Boot)
 

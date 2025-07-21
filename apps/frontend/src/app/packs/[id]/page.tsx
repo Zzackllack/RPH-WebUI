@@ -184,6 +184,7 @@ export default function PackDetailsPage() {
                                 startConversion={startConversion}
                                 job={job}
                                 convertedPack={convertedPack}
+                                conversions={conversions}
                                 API={API ?? ""}
                             />
                         </div>
