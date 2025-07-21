@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ConversionSection from "./components/ConversionSection";
-import ConvertedList from "./components/ConvertedList";
+import ConvertedPacksSection from "./components/ConvertedPacksSection";
 import DownloadUrl from "./components/DownloadUrl";
 import ErrorCard from "./components/ErrorCard";
 import HashDisplay from "./components/HashDisplay";
@@ -136,7 +136,7 @@ export default function PackDetailsPage() {
         <div className="absolute inset-0 minecraft-grid opacity-20"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-2xl mx-auto px-4">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4">
         <Link
           href="/"
           className="text-sm text-gray-500 hover:underline flex items-center gap-1 mb-4"
@@ -144,36 +144,43 @@ export default function PackDetailsPage() {
           <X className="w-4 h-4" /> Back to all packs
         </Link>
 
-        <div className="minecraft-card p-8 space-y-8 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80">
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-primary via-emerald-600 to-green-600 bg-clip-text drop-shadow-glow">
-            {pack.originalFilename}
-          </h1>
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Left: Pack Details */}
+          <div className="flex-1 min-w-0">
+            <div className="minecraft-card p-8 space-y-8 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80">
+              <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-primary via-emerald-600 to-green-600 bg-clip-text drop-shadow-glow">
+                {pack.originalFilename}
+              </h1>
 
-          {/* Pack Info Section */}
-          <PackInfo pack={pack} />
+              {/* Pack Info Section */}
+              <PackInfo pack={pack} />
 
-          {/* Download URL */}
-          <DownloadUrl url={downloadUrl} />
+              {/* Download URL */}
+              <DownloadUrl url={downloadUrl} />
 
-          {/* SHA-256 Hash */}
-          <HashDisplay hash={hash} loading={hashLoading} />
+              {/* SHA-256 Hash */}
+              <HashDisplay hash={hash} loading={hashLoading} />
 
-          {/* server.properties snippet */}
-          <ServerPropertiesSnippet url={downloadUrl} hash={hash} />
+              {/* server.properties snippet */}
+              <ServerPropertiesSnippet url={downloadUrl} hash={hash} />
 
-          {/* Converted versions */}
-          <ConvertedList packs={conversions} API={API ?? ""} />
+              {/* Conversion Section */}
+              <ConversionSection
+                version={version}
+                setVersion={setVersion}
+                polling={polling}
+                startConversion={startConversion}
+                job={job}
+                convertedPack={convertedPack}
+                API={API ?? ""}
+              />
+            </div>
+          </div>
 
-          {/* Conversion Section */}
-          <ConversionSection
-            version={version}
-            setVersion={setVersion}
-            polling={polling}
-            startConversion={startConversion}
-            job={job}
-            convertedPack={convertedPack}
-            API={API ?? ""}
-          />
+          {/* Right: Converted Packs Section */}
+          <div className="flex-1 min-w-0">
+            <ConvertedPacksSection packs={conversions} />
+          </div>
         </div>
       </div>
     </div>
