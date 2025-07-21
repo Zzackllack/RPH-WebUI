@@ -18,7 +18,7 @@ export default function HashDisplay({
             className="p-4 rounded-2xl bg-gradient-to-br from-white/80 to-green-50/60 dark:from-gray-900/80 dark:to-green-900/40 border border-green-400/20 flex flex-col gap-2 shadow-md"
         >
             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
-                <Hash className="w-5 h-5 text-green-500" /> SHA-256 Hash
+                <Hash className="w-5 h-5 text-green-500" /> SHA-1 Hash
             </p>
             <div className="flex items-center gap-2 overflow-x-auto">
                 {loading ? (

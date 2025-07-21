@@ -1,16 +1,11 @@
 package com.zacklack.zacklack.controller;
 
-import com.zacklack.zacklack.model.ConversionJob;
-import com.zacklack.zacklack.model.ResourcePack;
-import com.zacklack.zacklack.repository.ConversionJobRepository;
-import com.zacklack.zacklack.service.ConverterService;
-import com.zacklack.zacklack.service.ResourcePackService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
 import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.zacklack.zacklack.model.ConversionJob;
+import com.zacklack.zacklack.model.ResourcePack;
+import com.zacklack.zacklack.repository.ConversionJobRepository;
+import com.zacklack.zacklack.service.ConverterService;
+import com.zacklack.zacklack.service.ResourcePackService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * REST controller exposing CRUD and conversion endpoints for ResourcePacks.
@@ -87,7 +90,7 @@ public class ResourcePackController {
     }
 
     /**
-     * Get the SHA-256 hash of the stored file for a given pack.
+     * Get the SHA-1 hash of the stored file for a given pack.
      *
      * @param id pack ID
      * @return 200 + hash string or 404 if pack not found

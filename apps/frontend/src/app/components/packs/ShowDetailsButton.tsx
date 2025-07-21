@@ -119,7 +119,7 @@ resource-pack-sha1=${hash}`;
                                         {/* File Hash */}
                                         <div className="p-4 border rounded-lg bg-gray-100 dark:bg-gray-800">
                                             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                                SHA-256 Hash
+                                                SHA-1 Hash
                                             </p>
                                             <div className="flex items-start gap-2 overflow-x-auto">
                                                 <Hash className="w-5 h-5 text-green-500 flex-shrink-0" />

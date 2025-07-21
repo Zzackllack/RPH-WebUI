@@ -303,16 +303,16 @@ public class ResourcePackService {
     }
 
     /**
-     * Compute SHA-256 of a file on disk.
+     * Compute SHA-1 of a file on disk.
      *
      * @param file Path to file
-     * @return hex-encoded SHA-256 digest
+     * @return hex-encoded SHA-1 digest
      * @throws IOException on I/O errors
      * @throws NoSuchAlgorithmException should not happen
      */
     public String computeHash(Path file)
         throws IOException, NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance("SHA-1");
         try (
             InputStream is = Files.newInputStream(file);
             DigestInputStream dis = new DigestInputStream(is, digest);
