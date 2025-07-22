@@ -1,6 +1,10 @@
 "use client";
 
-import type { ApiConversionJob, ApiResourcePack } from "@/app/types";
+import { ForcePackConfigDisplay } from "@/app/components/ui/ForcePackConfigDisplay";
+import { ForcePackModal } from "@/app/components/ui/ForcePackModal";
+import { GenerateForcePackConfigButton } from "@/app/components/ui/GenerateForcePackConfigButton";
+import { useToast } from "@/app/contexts/ToastContext";
+import { ApiConversionJob, ApiResourcePack } from "@/app/types";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -14,10 +18,10 @@ import HashDisplay from "./components/HashDisplay";
 import Loading from "./components/Loading";
 import PackInfo from "./components/PackInfo";
 import ServerPropertiesSnippet from "./components/ServerPropertiesSnippet";
-import ForcePackConfigSection from "./components/ForcePackConfigSection";
 
 export default function PackDetailsPage() {
     const { id } = useParams();
+    useToast();
 
     // Original pack
     const [pack, setPack] = useState<ApiResourcePack | null>(null);
@@ -40,9 +44,52 @@ export default function PackDetailsPage() {
 
     const [conversions, setConversions] = useState<ApiResourcePack[]>([]);
 
-    const [showForcePack, setShowForcePack] = useState(false);
+    // ForcePack configuration
+    const [showForcePackModal, setShowForcePackModal] = useState(false);
+    const [forcePackConfig, setForcePackConfig] = useState<{
+        config: string;
+        mode: "global" | "server";
+        serverName?: string;
+    } | null>(null);
 
     const API = process.env.NEXT_PUBLIC_API_URL;
+
+    // Load ForcePack config from localStorage on mount
+    useEffect(() => {
+        if (!id) return;
+        const storageKey = `forcepack-config-${id}`;
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+            try {
+                setForcePackConfig(JSON.parse(stored));
+            } catch (e) {
+                // Invalid JSON, remove it
+                localStorage.removeItem(storageKey);
+            }
+        }
+    }, [id]);
+
+    // Handle ForcePack config generation
+    const handleForcePackConfigGenerated = (config: string, mode: "global" | "server", serverName?: string) => {
+        const configData = { config, mode, serverName };
+        setForcePackConfig(configData);
+        setShowForcePackModal(false);
+        
+        // Persist to localStorage
+        if (id) {
+            const storageKey = `forcepack-config-${id}`;
+            localStorage.setItem(storageKey, JSON.stringify(configData));
+        }
+    };
+
+    // Handle closing ForcePack config
+    const handleCloseForcePackConfig = () => {
+        setForcePackConfig(null);
+        if (id) {
+            const storageKey = `forcepack-config-${id}`;
+            localStorage.removeItem(storageKey);
+        }
+    };
 
     // Load original pack
     useEffect(() => {
@@ -113,6 +160,8 @@ export default function PackDetailsPage() {
             ) {
                 setPolling(false);
                 clearInterval(interval);
+                
+                
 
                 // On success, reload conversions
                 if (updated.status === "COMPLETED") {
@@ -156,8 +205,19 @@ export default function PackDetailsPage() {
 
     const downloadUrl = `${API}/uploads/${pack.storageFilename}`;
 
-    // Dynamic layout: if conversions exist, use grid with details left and conversions right; else, center details and make it larger
+    // Dynamic layout: if conversions exist or config exists, use grid layout; else, center details and make it larger
     const hasConversions = conversions && conversions.length > 0;
+    const hasForcePackConfig = !!forcePackConfig;
+    
+    // Determine grid layout based on what sections exist
+    const getGridCols = () => {
+        if (hasConversions && hasForcePackConfig) return "grid-cols-1 lg:grid-cols-3"; // 3 columns on large screens
+        if (hasConversions || hasForcePackConfig) return "grid-cols-1 md:grid-cols-2"; // 2 columns
+        return null; // Single centered layout
+    };
+    
+    const gridCols = getGridCols();
+    
     return (
         <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden pt-20 pb-20">
             {/* Animated background glows */}
@@ -168,7 +228,7 @@ export default function PackDetailsPage() {
                 <div className="absolute inset-0 minecraft-grid opacity-20"></div>
             </div>
 
-            <div className="relative z-10 w-full max-w-5xl mx-auto px-4">
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-4">
                 <Link
                     href="/"
                     className="text-sm text-gray-500 hover:underline flex items-center gap-1 mb-4"
@@ -176,9 +236,16 @@ export default function PackDetailsPage() {
                     <X className="w-4 h-4" /> Back to all packs
                 </Link>
 
-                {hasConversions ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Left: Pack Details, smaller and left-aligned */}
+                {/* Centered ForcePack Button */}
+                <GenerateForcePackConfigButton
+                    disabled={!!forcePackConfig}
+                    onClick={() => setShowForcePackModal(true)}
+                    forcePackConfig={forcePackConfig}
+                />
+
+                {gridCols ? (
+                    <div className={`grid ${gridCols} gap-8`}>
+                        {/* Pack Details Section */}
                         <div className="col-span-1">
                             <div className="minecraft-card p-6 md:p-8 space-y-8 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80">
                                 <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-primary via-emerald-600 to-green-600 bg-clip-text drop-shadow-glow">
@@ -190,21 +257,6 @@ export default function PackDetailsPage() {
                                     hash={hash}
                                     loading={hashLoading}
                                 />
-                                <button
-                                    onClick={() => setShowForcePack((v) => !v)}
-                                    className="minecraft-button px-4 py-2"
-                                >
-                                    {showForcePack
-                                        ? "Hide ForcePack Config"
-                                        : "Generate ForcePack Config"}
-                                </button>
-                                {showForcePack && (
-                                    <ForcePackConfigSection
-                                        pack={pack}
-                                        conversions={conversions}
-                                        apiUrl={API ?? ""}
-                                    />
-                                )}
                                 <ServerPropertiesSnippet
                                     url={downloadUrl}
                                     hash={hash}
@@ -221,10 +273,25 @@ export default function PackDetailsPage() {
                                 />
                             </div>
                         </div>
-                        {/* Right: Converted Packs Section */}
-                        <div className="col-span-1 flex items-start justify-center">
-                            <ConvertedPacksSection packs={conversions} />
-                        </div>
+                        
+                        {/* ForcePack Config Section */}
+                        {hasForcePackConfig && (
+                            <div className="col-span-1">
+                                <ForcePackConfigDisplay
+                                    config={forcePackConfig.config}
+                                    mode={forcePackConfig.mode}
+                                    serverName={forcePackConfig.serverName}
+                                    onClose={handleCloseForcePackConfig}
+                                />
+                            </div>
+                        )}
+                        
+                        {/* Converted Packs Section */}
+                        {hasConversions && (
+                            <div className="col-span-1 flex items-start justify-center">
+                                <ConvertedPacksSection packs={conversions} />
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="flex items-center justify-center min-h-[60vh]">
@@ -239,21 +306,6 @@ export default function PackDetailsPage() {
                                     hash={hash}
                                     loading={hashLoading}
                                 />
-                                <button
-                                    onClick={() => setShowForcePack((v) => !v)}
-                                    className="minecraft-button px-4 py-2"
-                                >
-                                    {showForcePack
-                                        ? "Hide ForcePack Config"
-                                        : "Generate ForcePack Config"}
-                                </button>
-                                {showForcePack && (
-                                    <ForcePackConfigSection
-                                        pack={pack}
-                                        conversions={conversions}
-                                        apiUrl={API ?? ""}
-                                    />
-                                )}
                                 <ServerPropertiesSnippet
                                     url={downloadUrl}
                                     hash={hash}
@@ -273,6 +325,17 @@ export default function PackDetailsPage() {
                     </div>
                 )}
             </div>
+            
+    
+            {/* ForcePack Modal */}
+            <ForcePackModal
+                open={showForcePackModal}
+                onClose={() => setShowForcePackModal(false)}
+                pack={pack}
+                conversions={conversions}
+                apiUrl={API ?? ""}
+                onConfigGenerated={handleForcePackConfigGenerated}
+            />
         </div>
     );
 }
