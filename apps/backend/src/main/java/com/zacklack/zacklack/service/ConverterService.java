@@ -196,6 +196,7 @@ public class ConverterService {
                 conv.setConverted(true);
                 conv.setOriginalPack(orig);
                 conv.setTargetVersion(job.getTargetVersion());
+                packService.populatePackMetadata(conv, output);
                 packRepo.save(conv);
 
                 job.setStatus("COMPLETED");

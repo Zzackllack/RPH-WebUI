@@ -1,5 +1,10 @@
 package com.zacklack.zacklack.service;
 
+import com.zacklack.zacklack.exception.InvalidPackException;
+import com.zacklack.zacklack.model.ResourcePack;
+import com.zacklack.zacklack.repository.ResourcePackRepository;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -14,19 +19,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.zacklack.zacklack.exception.InvalidPackException;
-import com.zacklack.zacklack.model.ResourcePack;
-import com.zacklack.zacklack.repository.ResourcePackRepository;
-
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Handles validation, storage, retrieval and deletion of ResourcePack files.
@@ -242,10 +239,23 @@ public class ResourcePackService {
             LocalDateTime.now()
         );
 
-        // Detect pack_format from pack.mcmeta
+        // Extract pack_format and Minecraft version
+        populatePackMetadata(rp, target);
+        ResourcePack saved = repository.save(rp);
+        logger.debug("Persisted ResourcePack id={}", saved.getId());
+        return saved;
+    }
+
+    /**
+     * Parse pack.mcmeta from a zip and populate packFormat and minecraftVersion.
+     *
+     * @param rp       ResourcePack entity to update
+     * @param zipPath  path to the resource pack zip
+     */
+    public void populatePackMetadata(ResourcePack rp, Path zipPath) {
         try (
             ZipInputStream zis = new ZipInputStream(
-                Files.newInputStream(target)
+                Files.newInputStream(zipPath)
             );
         ) {
             ZipEntry e;
@@ -267,13 +277,10 @@ public class ResourcePackService {
         } catch (Exception ex) {
             logger.warn(
                 "Failed to parse pack.mcmeta for {}: {}",
-                originalFilename,
+                zipPath.getFileName(),
                 ex.getMessage()
             );
         }
-        ResourcePack saved = repository.save(rp);
-        logger.debug("Persisted ResourcePack id={}", saved.getId());
-        return saved;
     }
 
     /**
