@@ -1,7 +1,7 @@
 import { ConvertVersionModal } from "@/app/components/ui/ConvertVersionModal";
 import type { ApiConversionJob, ApiResourcePack } from "@/app/types";
 import { motion } from "framer-motion";
-import { FolderSync, HelpCircle } from "lucide-react";
+import { FolderSync } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
@@ -49,10 +49,6 @@ export default function ConversionSection({
                         </div>
                         <div className="flex flex-col items-start">
                             <span>Convert to Another Version</span>
-                            <span className="text-xs opacity-70 flex items-center gap-1">
-                                <HelpCircle className="w-3 h-3" />
-                                Will convert this pack to a different Minecraft version.
-                            </span>
                         </div>
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/20 to-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
                     </button>

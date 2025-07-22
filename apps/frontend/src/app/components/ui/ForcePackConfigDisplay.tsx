@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from "@/app/contexts/ToastContext";
 import { motion } from "framer-motion";
 import { Braces, Check, Copy, X } from "lucide-react";
 import { useState } from "react";
@@ -18,10 +19,24 @@ export function ForcePackConfigDisplay({
     onClose,
 }: ForcePackConfigDisplayProps) {
     const [copied, setCopied] = useState(false);
+    const { addToast } = useToast();
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(config);
-        setCopied(true);
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(config);
+            setCopied(true);
+            addToast({
+                type: "success",
+                title: "Configuration Copied!",
+                message: "ForcePack config has been copied to your clipboard.",
+            });
+        } catch (err) {
+            addToast({
+                type: "error",
+                title: "Copy Failed",
+                message: "Could not copy configuration. Please try again.",
+            });
+        }
         setTimeout(() => setCopied(false), 1200);
     };
 

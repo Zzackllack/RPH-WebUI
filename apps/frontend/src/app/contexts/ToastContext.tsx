@@ -51,23 +51,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const getColors = (type: Toast["type"]) => {
-        switch (type) {
-            case "success":
-                return "border-green-200 bg-green-50";
-            case "error":
-                return "border-red-200 bg-red-50";
-            case "warning":
-                return "border-yellow-200 bg-yellow-50";
-            case "info":
-                return "border-blue-200 bg-blue-50";
-        }
-    };
 
+    // Force dark mode for all toasts
     return (
         <ToastContext.Provider value={{ addToast, removeToast }}>
             {children}
-            <div className="fixed top-4 right-4 z-50 space-y-2">
+            <div className="fixed top-4 right-4 z-50 space-y-2 pointer-events-none">
                 <AnimatePresence>
                     {toasts.map((toast) => (
                         <motion.div
@@ -75,28 +64,26 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                             initial={{ opacity: 0, x: 100, scale: 0.8 }}
                             animate={{ opacity: 1, x: 0, scale: 1 }}
                             exit={{ opacity: 0, x: 100, scale: 0.8 }}
-                            className={`
-                max-w-md p-4 rounded-lg border shadow-lg backdrop-blur-md
-                ${getColors(toast.type)}
-              `}
+                            className={`max-w-md p-4 rounded-2xl border-2 shadow-2xl backdrop-blur-lg bg-gray-900/95 border-gray-800 pointer-events-auto flex items-center gap-4 transition-all duration-300`}
                         >
-                            <div className="flex items-start gap-3">
-                                {getIcon(toast.type)}
+                            <div className="flex items-center gap-3 w-full">
+                                <div className="flex-shrink-0">{getIcon(toast.type)}</div>
                                 <div className="flex-1">
-                                    <h4 className="font-medium text-gray-900">
+                                    <h4 className="font-semibold text-gray-100 drop-shadow-glow">
                                         {toast.title}
                                     </h4>
                                     {toast.message && (
-                                        <p className="text-sm text-gray-600 mt-1">
+                                        <p className="text-sm text-gray-400 mt-1">
                                             {toast.message}
                                         </p>
                                     )}
                                 </div>
                                 <button
                                     onClick={() => removeToast(toast.id)}
-                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    className="ml-2 p-2 rounded-lg bg-gray-800 hover:bg-emerald-700 text-gray-300 hover:text-white shadow-md transition-all"
+                                    aria-label="Close toast"
                                 >
-                                    <X className="w-4 h-4" />
+                                    <X className="w-5 h-5" />
                                 </button>
                             </div>
                         </motion.div>

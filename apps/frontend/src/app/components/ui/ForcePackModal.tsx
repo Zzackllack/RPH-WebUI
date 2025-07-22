@@ -130,7 +130,17 @@ export function ForcePackModal({
             if (mode === "server") setStep("server-name");
             else setStep("review");
         }
-        else if (step === "server-name") setStep("review");
+        else if (step === "server-name") {
+            if (!serverName.trim()) {
+                addToast({
+                    type: "error",
+                    title: "Missing Server Name",
+                    message: "Please enter a valid server name before proceeding.",
+                });
+                return;
+            }
+            setStep("review");
+        }
     };
 
     const prevStep = () => {
