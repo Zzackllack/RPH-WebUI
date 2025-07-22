@@ -7,11 +7,10 @@ export default function Loading() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="text-center"
+                className="flex flex-col items-center justify-center w-full text-center"
             >
-                <div className="relative mx-auto mb-8">
+                <div className="mb-8 flex items-center justify-center w-full">
                     <div className="loading-spinner w-16 h-16"></div>
-                    <div className="absolute inset-0 loading-spinner w-16 h-16 opacity-30 animate-ping"></div>
                 </div>
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
