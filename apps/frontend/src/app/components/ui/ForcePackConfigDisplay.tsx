@@ -30,7 +30,7 @@ export function ForcePackConfigDisplay({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="minecraft-card p-6 md:p-8 space-y-6 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 h-full"
+            className="minecraft-card p-6 md:p-8 space-y-6 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80"
         >
             <div className="flex items-center justify-between">
                 <div>
@@ -52,12 +52,11 @@ export function ForcePackConfigDisplay({
             </div>
 
             <div className="relative flex-1">
-                <textarea
-                    value={config}
-                    readOnly
-                    className="w-full min-h-[400px] max-h-[60vh] bg-black/5 dark:bg-white/5 border border-emerald-400/10 rounded-lg px-4 py-3 text-xs font-mono text-gray-800 dark:text-gray-100 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500 overflow-auto shadow-inner whitespace-pre"
-                    placeholder="Generated configuration will appear here..."
-                />
+                <pre
+                    className="bg-black/5 dark:bg-white/5 rounded-lg px-3 py-2 text-xs font-mono text-gray-800 dark:text-gray-100 select-all overflow-x shadow-inner border border-emerald-400/10 whitespace-pre-line break-words"
+                >
+                    {config}
+                </pre>
                 <button
                     onClick={handleCopy}
                     className={`absolute top-3 right-3 p-2 rounded-lg transition-all ${
