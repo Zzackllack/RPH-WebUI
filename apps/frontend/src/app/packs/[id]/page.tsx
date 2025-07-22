@@ -14,6 +14,7 @@ import HashDisplay from "./components/HashDisplay";
 import Loading from "./components/Loading";
 import PackInfo from "./components/PackInfo";
 import ServerPropertiesSnippet from "./components/ServerPropertiesSnippet";
+import ForcePackConfigSection from "./components/ForcePackConfigSection";
 
 export default function PackDetailsPage() {
     const { id } = useParams();
@@ -38,6 +39,8 @@ export default function PackDetailsPage() {
     );
 
     const [conversions, setConversions] = useState<ApiResourcePack[]>([]);
+
+    const [showForcePack, setShowForcePack] = useState(false);
 
     const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -187,6 +190,21 @@ export default function PackDetailsPage() {
                                     hash={hash}
                                     loading={hashLoading}
                                 />
+                                <button
+                                    onClick={() => setShowForcePack((v) => !v)}
+                                    className="minecraft-button px-4 py-2"
+                                >
+                                    {showForcePack
+                                        ? "Hide ForcePack Config"
+                                        : "Generate ForcePack Config"}
+                                </button>
+                                {showForcePack && (
+                                    <ForcePackConfigSection
+                                        pack={pack}
+                                        conversions={conversions}
+                                        apiUrl={API ?? ""}
+                                    />
+                                )}
                                 <ServerPropertiesSnippet
                                     url={downloadUrl}
                                     hash={hash}
@@ -221,6 +239,21 @@ export default function PackDetailsPage() {
                                     hash={hash}
                                     loading={hashLoading}
                                 />
+                                <button
+                                    onClick={() => setShowForcePack((v) => !v)}
+                                    className="minecraft-button px-4 py-2"
+                                >
+                                    {showForcePack
+                                        ? "Hide ForcePack Config"
+                                        : "Generate ForcePack Config"}
+                                </button>
+                                {showForcePack && (
+                                    <ForcePackConfigSection
+                                        pack={pack}
+                                        conversions={conversions}
+                                        apiUrl={API ?? ""}
+                                    />
+                                )}
                                 <ServerPropertiesSnippet
                                     url={downloadUrl}
                                     hash={hash}
