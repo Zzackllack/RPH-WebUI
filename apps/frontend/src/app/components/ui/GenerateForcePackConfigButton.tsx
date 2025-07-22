@@ -15,8 +15,7 @@ export const GenerateForcePackConfigButton: React.FC<GenerateForcePackConfigButt
     onClick,
     forcePackConfig,
 }) => {
-    import { useToast } from "@/app/contexts/ToastContext";
-    const { addToast } = useToast();
+    const { addToast } = require("@/app/contexts/ToastContext");
 
     const handleClick = () => {
         if (disabled) {
