@@ -236,15 +236,20 @@ export default function PackDetailsPage() {
                     <X className="w-4 h-4" /> Back to all packs
                 </Link>
 
-                {/* Centered ForcePack Button */}
-                <GenerateForcePackConfigButton
-                    disabled={!!forcePackConfig}
-                    onClick={() => setShowForcePackModal(true)}
-                    forcePackConfig={forcePackConfig}
-                />
-
                 {gridCols ? (
                     <div className={`grid ${gridCols} gap-8`}>
+                        {/* ForcePack Config Section */}
+                        {hasForcePackConfig && (
+                            <div className="col-span-1">
+                                <ForcePackConfigDisplay
+                                    config={forcePackConfig.config}
+                                    mode={forcePackConfig.mode}
+                                    serverName={forcePackConfig.serverName}
+                                    onClose={handleCloseForcePackConfig}
+                                />
+                            </div>
+                        )}
+
                         {/* Pack Details Section */}
                         <div className="col-span-1">
                             <div className="minecraft-card p-6 md:p-8 space-y-8 border border-white/30 dark:border-gray-800/60 shadow-2xl backdrop-blur-lg bg-white/80 dark:bg-gray-900/80">
@@ -271,21 +276,14 @@ export default function PackDetailsPage() {
                                     conversions={conversions}
                                     API={API ?? ""}
                                 />
-                            </div>
-                        </div>
-                        
-                        {/* ForcePack Config Section */}
-                        {hasForcePackConfig && (
-                            <div className="col-span-1">
-                                <ForcePackConfigDisplay
-                                    config={forcePackConfig.config}
-                                    mode={forcePackConfig.mode}
-                                    serverName={forcePackConfig.serverName}
-                                    onClose={handleCloseForcePackConfig}
+                                <GenerateForcePackConfigButton
+                                        disabled={!!forcePackConfig}
+                                        onClick={() => setShowForcePackModal(true)}
+                                        forcePackConfig={forcePackConfig}
                                 />
                             </div>
-                        )}
-                        
+                        </div>
+
                         {/* Converted Packs Section */}
                         {hasConversions && (
                             <div className="col-span-1 flex items-start justify-center">
@@ -320,13 +318,20 @@ export default function PackDetailsPage() {
                                     conversions={conversions}
                                     API={API ?? ""}
                                 />
+                                {/* Button below details, full width, with padding */}
+                                <div>
+                                    <GenerateForcePackConfigButton
+                                        disabled={!!forcePackConfig}
+                                        onClick={() => setShowForcePackModal(true)}
+                                        forcePackConfig={forcePackConfig}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 )}
             </div>
-            
-    
+
             {/* ForcePack Modal */}
             <ForcePackModal
                 open={showForcePackModal}

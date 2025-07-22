@@ -328,7 +328,7 @@ export function ForcePackModal({
                                                 </p>
                                                 {conversions.length > 0 && (
                                                     <div className="mt-2 text-xs text-emerald-600 dark:text-emerald-400">
-                                                        ✨ Supports {conversions.length + 1} version{conversions.length > 0 ? "s" : ""}
+                                                        ✨ Supports all {conversions.length + 1} version{conversions.length > 0 ? "s" : ""}
                                                     </div>
                                                 )}
                                             </div>
