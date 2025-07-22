@@ -9,14 +9,35 @@ export default function PackInfo({ pack }: { pack: ApiResourcePack }) {
             transition={{ delay: 0.12 }}
             className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-gradient-to-br from-white/80 to-emerald-50/60 dark:from-gray-900/80 dark:to-emerald-900/40 border border-emerald-400/20 shadow-md"
         >
-            <div>
-                <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
-                    Minecraft Version
-                </span>
-                <span className="font-mono text-sm text-emerald-700 dark:text-emerald-300">
-                    {pack.minecraftVersion || "Unknown"}
-                </span>
-            </div>
+            {pack.converted ? (
+                <>
+                    <div>
+                        <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                            Converted Into
+                        </span>
+                        <span className="font-mono text-sm text-emerald-700 dark:text-emerald-300">
+                            {pack.targetVersion || "Unknown"}
+                        </span>
+                    </div>
+                    <div>
+                        <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                            Compatible Versions
+                        </span>
+                        <span className="font-mono text-sm text-emerald-700 dark:text-emerald-300">
+                            {pack.minecraftVersion || "Unknown"}
+                        </span>
+                    </div>
+                </>
+            ) : (
+                <div>
+                    <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                        Minecraft Version
+                    </span>
+                    <span className="font-mono text-sm text-emerald-700 dark:text-emerald-300">
+                        {pack.minecraftVersion || "Unknown"}
+                    </span>
+                </div>
+            )}
             <div>
                 <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
                     Pack Format
