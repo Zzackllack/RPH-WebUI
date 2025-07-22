@@ -19,14 +19,6 @@ export default function ConvertedPacksSection({
             transition={{ duration: 0.5 }}
             className="w-full max-w-lg mx-auto"
         >
-            <motion.h2
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-primary/70 to-emerald-400 bg-clip-text text-transparent"
-            >
-                Converted Versions
-            </motion.h2>
             <div className="grid grid-cols-1 gap-6">
                 {packs.map((pack) => (
                     <motion.div
