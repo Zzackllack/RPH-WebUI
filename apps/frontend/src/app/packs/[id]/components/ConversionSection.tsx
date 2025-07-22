@@ -6,9 +6,8 @@ import { useState } from "react";
 
 type Props = {
     version: string;
-    setVersion: (v: string) => void;
     polling: boolean;
-    startConversion: () => void;
+    startConversion: (v: string) => void;
     job: ApiConversionJob | null;
     convertedPack: ApiResourcePack | null;
     conversions: ApiResourcePack[];
@@ -16,7 +15,6 @@ type Props = {
 };
 
 export default function ConversionSection({
-    setVersion,
     startConversion,
     job,
     conversions,
@@ -30,8 +28,7 @@ export default function ConversionSection({
                 onClose={() => setShowModal(false)}
                 conversions={conversions}
                 onConvert={(v) => {
-                    setVersion(v);
-                    startConversion();
+                    startConversion(v);
                 }}
             />
             <motion.div
@@ -40,18 +37,18 @@ export default function ConversionSection({
                 transition={{ delay: 0.3 }}
                 className=""
             >
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="group relative minecraft-button w-full px-8 py-4 text-lg font-semibold flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
-                    >
-                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                            <FolderSync className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-                        </div>
-                        <div className="flex flex-col items-start">
-                            <span>Convert to Another Version</span>
-                        </div>
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/20 to-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
-                    </button>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="group relative minecraft-button w-full px-8 py-4 text-lg font-semibold flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
+                >
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <FolderSync className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div className="flex flex-col items-start">
+                        <span>Convert to Another Version</span>
+                    </div>
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/20 to-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+                </button>
                 {job && (
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
@@ -61,7 +58,8 @@ export default function ConversionSection({
                     >
                         <div className="flex items-center gap-2">
                             <strong>Job #{job.id}:</strong>
-                            {job.status === "PENDING" || job.status === "IN_PROGRESS" ? (
+                            {job.status === "PENDING" ||
+                            job.status === "IN_PROGRESS" ? (
                                 <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-300">
                                     <svg
                                         className="animate-spin w-4 h-4"

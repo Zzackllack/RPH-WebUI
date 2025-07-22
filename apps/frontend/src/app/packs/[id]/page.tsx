@@ -70,11 +70,15 @@ export default function PackDetailsPage() {
     }, [id]);
 
     // Handle ForcePack config generation
-    const handleForcePackConfigGenerated = (config: string, mode: "global" | "server", serverName?: string) => {
+    const handleForcePackConfigGenerated = (
+        config: string,
+        mode: "global" | "server",
+        serverName?: string
+    ) => {
         const configData = { config, mode, serverName };
         setForcePackConfig(configData);
         setShowForcePackModal(false);
-        
+
         // Persist to localStorage
         if (id) {
             const storageKey = `forcepack-config-${id}`;
@@ -129,11 +133,12 @@ export default function PackDetailsPage() {
     }, [id, API]);
 
     // Kick off a conversion job
-    const startConversion = async () => {
+    const startConversion = async (targetVersion: string) => {
+        setVersion(targetVersion);
         setJob(null);
         setConvertedPack(null);
         const res = await fetch(
-            `${API}/api/resourcepacks/${id}/convert?version=${encodeURIComponent(version)}`,
+            `${API}/api/resourcepacks/${id}/convert?version=${encodeURIComponent(targetVersion)}`,
             { method: "POST" }
         );
         if (!res.ok) {
@@ -160,8 +165,6 @@ export default function PackDetailsPage() {
             ) {
                 setPolling(false);
                 clearInterval(interval);
-                
-                
 
                 // On success, reload conversions
                 if (updated.status === "COMPLETED") {
@@ -208,16 +211,18 @@ export default function PackDetailsPage() {
     // Dynamic layout: if conversions exist or config exists, use grid layout; else, center details and make it larger
     const hasConversions = conversions && conversions.length > 0;
     const hasForcePackConfig = !!forcePackConfig;
-    
+
     // Determine grid layout based on what sections exist
     const getGridCols = () => {
-        if (hasConversions && hasForcePackConfig) return "grid-cols-1 lg:grid-cols-3"; // 3 columns on large screens
-        if (hasConversions || hasForcePackConfig) return "grid-cols-1 md:grid-cols-2"; // 2 columns
+        if (hasConversions && hasForcePackConfig)
+            return "grid-cols-1 lg:grid-cols-3"; // 3 columns on large screens
+        if (hasConversions || hasForcePackConfig)
+            return "grid-cols-1 md:grid-cols-2"; // 2 columns
         return null; // Single centered layout
     };
-    
+
     const gridCols = getGridCols();
-    
+
     return (
         <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden pt-20 pb-20">
             {/* Animated background glows */}
@@ -268,7 +273,6 @@ export default function PackDetailsPage() {
                                 />
                                 <ConversionSection
                                     version={version}
-                                    setVersion={setVersion}
                                     polling={polling}
                                     startConversion={startConversion}
                                     job={job}
@@ -277,9 +281,9 @@ export default function PackDetailsPage() {
                                     API={API ?? ""}
                                 />
                                 <GenerateForcePackConfigButton
-                                        disabled={!!forcePackConfig}
-                                        onClick={() => setShowForcePackModal(true)}
-                                        forcePackConfig={forcePackConfig}
+                                    disabled={!!forcePackConfig}
+                                    onClick={() => setShowForcePackModal(true)}
+                                    forcePackConfig={forcePackConfig}
                                 />
                             </div>
                         </div>
@@ -310,7 +314,6 @@ export default function PackDetailsPage() {
                                 />
                                 <ConversionSection
                                     version={version}
-                                    setVersion={setVersion}
                                     polling={polling}
                                     startConversion={startConversion}
                                     job={job}
@@ -322,7 +325,9 @@ export default function PackDetailsPage() {
                                 <div>
                                     <GenerateForcePackConfigButton
                                         disabled={!!forcePackConfig}
-                                        onClick={() => setShowForcePackModal(true)}
+                                        onClick={() =>
+                                            setShowForcePackModal(true)
+                                        }
                                         forcePackConfig={forcePackConfig}
                                     />
                                 </div>

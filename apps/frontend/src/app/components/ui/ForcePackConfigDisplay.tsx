@@ -54,7 +54,9 @@ export function ForcePackConfigDisplay({
                         ForcePack Configuration
                     </h2>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {mode === "global" ? "Global pack configuration" : `Server configuration for "${serverName}"`}
+                        {mode === "global"
+                            ? "Global pack configuration"
+                            : `Server configuration for "${serverName}"`}
                     </p>
                 </div>
                 <button
@@ -67,9 +69,7 @@ export function ForcePackConfigDisplay({
             </div>
 
             <div className="relative flex-1">
-                <pre
-                    className="bg-black/5 dark:bg-white/5 rounded-lg px-3 py-2 text-xs font-mono text-gray-800 dark:text-gray-100 select-all overflow-x shadow-inner border border-emerald-400/10 whitespace-pre-line break-words"
-                >
+                <pre className="bg-black/5 dark:bg-white/5 rounded-lg px-3 py-2 text-xs font-mono text-gray-800 dark:text-gray-100 select-all overflow-x shadow-inner border border-emerald-400/10 whitespace-pre-line break-words">
                     {config}
                 </pre>
                 <button
@@ -92,8 +92,10 @@ export function ForcePackConfigDisplay({
 
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                 <p className="text-sm text-blue-800 dark:text-blue-200">
-                    💡 <strong>Usage:</strong> Copy this configuration and paste it into your ForcePack plugin's config file. 
-                    Make sure to restart your server after making changes to the configuration.
+                    💡 <strong>Usage:</strong> Copy this configuration and paste
+                    it into your ForcePack plugin&apos;s config file. Make sure
+                    to restart your server after making changes to the
+                    configuration.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                     <a
