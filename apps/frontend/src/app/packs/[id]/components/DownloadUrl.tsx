@@ -24,7 +24,7 @@ export default function DownloadUrl({ url }: { url: string }) {
                     {url}
                 </a>
                 <button
-                    className={`ml-2 p-1 rounded transition relative overflow-hidden ${copied ? "bg-green-100 dark:bg-green-900/30" : "hover:bg-blue-100 dark:hover:bg-blue-900/30"}`}
+                    className={`ml-2 p-1 rounded transition relative overflow-hidden ${copied ? "bg-green-100 dark:bg-green-900/30" : "hover:bg-blue-100 dark:hover:bg-blue-900/30 cursor-pointer"}`}
                     onClick={() => {
                         navigator.clipboard.writeText(url);
                         setCopied(true);

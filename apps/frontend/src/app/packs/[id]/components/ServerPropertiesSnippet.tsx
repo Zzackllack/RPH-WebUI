@@ -27,7 +27,7 @@ export default function ServerPropertiesSnippet({
                     {snippet}
                 </pre>
                 <button
-                    className={`ml-2 p-1 rounded transition relative overflow-hidden ${copied ? "bg-green-100 dark:bg-green-900/30" : "hover:bg-emerald-100 dark:hover:bg-emerald-900/30"}`}
+                    className={`ml-2 p-1 rounded transition relative overflow-hidden ${copied ? "bg-green-100 dark:bg-green-900/30" : "hover:bg-emerald-100 dark:hover:bg-emerald-900/30 cursor-pointer"}`}
                     onClick={() => {
                         navigator.clipboard.writeText(snippet);
                         setCopied(true);
