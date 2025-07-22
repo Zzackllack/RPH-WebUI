@@ -1,6 +1,6 @@
-import org.junit.jupiter.api.Test;
+package com.zacklack.zacklack;
 
-import com.zacklack.zacklack.RphBackendApplication;
+import org.junit.jupiter.api.Test;
 
 class RphBackendApplicationSystemInfoTest {
     @Test

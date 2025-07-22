@@ -1,6 +1,4 @@
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+package com.zacklack.zacklack.service;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -10,12 +8,19 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -24,8 +29,6 @@ import com.zacklack.zacklack.model.ConversionJob;
 import com.zacklack.zacklack.model.ResourcePack;
 import com.zacklack.zacklack.repository.ConversionJobRepository;
 import com.zacklack.zacklack.repository.ResourcePackRepository;
-import com.zacklack.zacklack.service.ConverterService;
-import com.zacklack.zacklack.service.ResourcePackService;
 
 @ExtendWith(MockitoExtension.class)
 class ConverterServiceTest {
@@ -44,6 +47,7 @@ class ConverterServiceTest {
     ConversionJob job;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setup() throws Exception {
         service = new ConverterService(packRepo, jobRepo, packService);
         ReflectionTestUtils.setField(service, "uploadDir", tempDir.toString());

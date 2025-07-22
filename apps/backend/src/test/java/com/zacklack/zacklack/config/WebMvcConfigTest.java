@@ -1,11 +1,10 @@
+package com.zacklack.zacklack.config;
+
+import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-
-import com.zacklack.zacklack.config.WebMvcConfig;
-
-import jakarta.servlet.ServletContext;
 
 class WebMvcConfigTest {
     @TempDir

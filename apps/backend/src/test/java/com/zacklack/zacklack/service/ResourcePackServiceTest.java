@@ -1,7 +1,20 @@
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+package com.zacklack.zacklack.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.zacklack.zacklack.exception.InvalidPackException;
+import com.zacklack.zacklack.model.ResourcePack;
+import com.zacklack.zacklack.repository.ResourcePackRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,23 +25,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.Mockito;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import com.zacklack.zacklack.exception.InvalidPackException;
-import com.zacklack.zacklack.model.ResourcePack;
-import com.zacklack.zacklack.repository.ResourcePackRepository;
-import com.zacklack.zacklack.service.ResourcePackService;
 
 @ExtendWith(MockitoExtension.class)
 class ResourcePackServiceTest {
@@ -42,6 +46,7 @@ class ResourcePackServiceTest {
     ResourcePackService service;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setup() throws Exception {
         service = new ResourcePackService(repo);
         ReflectionTestUtils.setField(service, "uploadDir", tempDir.toString());
@@ -84,7 +89,8 @@ class ResourcePackServiceTest {
         HttpServletRequest req = mock(HttpServletRequest.class);
         when(req.getRemoteAddr()).thenReturn("127.0.0.1");
         when(req.getHeader("User-Agent")).thenReturn("JUnit");
-        assertThrows(InvalidPackException.class, () -> service.store(createZip(false), req));
+        InvalidPackException thrown = assertThrows(InvalidPackException.class, () -> service.store(createZip(false), req));
+        assertNotNull(thrown.getMessage());
     }
 
     @Test
