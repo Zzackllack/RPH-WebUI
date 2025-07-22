@@ -1,8 +1,7 @@
+package com.zacklack.zacklack.util;
+
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
-
-import com.zacklack.zacklack.util.PackFormatUtil;
 
 class PackFormatUtilTest {
     @Test

@@ -1,10 +1,10 @@
+package com.zacklack.zacklack.config;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.zacklack.zacklack.config.CorsConfig;
 
 class CorsConfigTest {
     @Test

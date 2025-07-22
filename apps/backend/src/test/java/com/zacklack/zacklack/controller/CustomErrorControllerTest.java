@@ -1,19 +1,16 @@
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.Map;
+package com.zacklack.zacklack.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-
+import java.util.Map;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.zacklack.zacklack.controller.CustomErrorController;
 
 class CustomErrorControllerTest {
     @Test

@@ -1,12 +1,9 @@
-import static org.junit.jupiter.api.Assertions.*;
+package com.zacklack.zacklack.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-
-import com.zacklack.zacklack.model.ConversionJob;
-import com.zacklack.zacklack.model.ResourcePack;
 
 class ModelTest {
     @Test

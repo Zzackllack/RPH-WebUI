@@ -1,33 +1,34 @@
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+package com.zacklack.zacklack.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import jakarta.servlet.http.HttpServletRequest;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import com.zacklack.zacklack.model.ConversionJob;
 import com.zacklack.zacklack.model.ResourcePack;
 import com.zacklack.zacklack.repository.ConversionJobRepository;
 import com.zacklack.zacklack.service.ConverterService;
 import com.zacklack.zacklack.service.ResourcePackService;
-import com.zacklack.zacklack.controller.ResourcePackController;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
 class ResourcePackControllerTest {
@@ -39,6 +40,7 @@ class ResourcePackControllerTest {
     ResourcePackController controller;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setup() {
         controller = new ResourcePackController(service, converterService, jobRepo);
     }
@@ -61,7 +63,7 @@ class ResourcePackControllerTest {
         when(service.findHashById(1L)).thenReturn("abc");
         assertEquals("abc", controller.getHash(1L).getBody());
         when(service.findHashById(2L)).thenThrow(new RuntimeException());
-        assertEquals(404, controller.getHash(2L).getStatusCodeValue());
+        assertEquals(404, controller.getHash(2L).getStatusCode().value());
     }
 
     private MockMultipartFile zip() throws Exception {
@@ -80,14 +82,14 @@ class ResourcePackControllerTest {
         when(service.store(any(), any())).thenReturn(rp);
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         ResponseEntity<ResourcePack> resp = controller.uploadPack(zip(), req, null);
-        assertEquals(201, resp.getStatusCodeValue());
+        assertEquals(201, resp.getStatusCode().value());
         assertSame(rp, resp.getBody());
     }
 
     @Test
     void deletePack() {
         ResponseEntity<Void> resp = controller.deleteResourcePack(3L);
-        assertEquals(204, resp.getStatusCodeValue());
+        assertEquals(204, resp.getStatusCode().value());
         verify(service).delete(3L);
     }
 
@@ -96,7 +98,7 @@ class ResourcePackControllerTest {
         ConversionJob job = new ConversionJob();
         when(converterService.createJob(1L, "1.20")).thenReturn(job);
         ResponseEntity<ConversionJob> resp = controller.convert(1L, "1.20");
-        assertEquals(202, resp.getStatusCodeValue());
+        assertEquals(202, resp.getStatusCode().value());
         verify(converterService).runConversion(job.getId());
     }
 
@@ -106,6 +108,6 @@ class ResourcePackControllerTest {
         when(jobRepo.findById(5L)).thenReturn(Optional.of(job));
         assertSame(job, controller.getJob(5L).getBody());
         when(jobRepo.findById(6L)).thenReturn(Optional.empty());
-        assertEquals(404, controller.getJob(6L).getStatusCodeValue());
+        assertEquals(404, controller.getJob(6L).getStatusCode().value());
     }
 }
