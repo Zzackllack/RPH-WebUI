@@ -30,10 +30,9 @@ function PacksList() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center py-16">
-                <div className="relative">
+            <div className="flex items-center justify-center py-16 w-full">
+                <div className="flex items-center justify-center w-full">
                     <div className="loading-spinner w-12 h-12"></div>
-                    <div className="absolute inset-0 loading-spinner w-12 h-12 opacity-30 animate-ping"></div>
                 </div>
             </div>
         );
