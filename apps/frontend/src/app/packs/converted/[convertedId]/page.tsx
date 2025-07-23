@@ -21,6 +21,8 @@ export default function ConvertedPackDetailsPage() {
     const [error, setError] = useState<string | null>(null);
     const [hash, setHash] = useState<string | null>(null);
     const [hashLoading, setHashLoading] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
 
     const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -70,6 +72,26 @@ export default function ConvertedPackDetailsPage() {
     }
 
     const downloadUrl = `${API}/uploads/${pack.storageFilename}`;
+    const handleDelete = async () => {
+        if (!window.confirm("Are you sure you want to delete this converted pack? This action cannot be undone.")) return;
+        setDeleting(true);
+        setDeleteError(null);
+        try {
+            const res = await fetch(`${API}/api/resourcepacks/${pack.id}`, { method: "DELETE" });
+            if (!res.ok && res.status !== 204) throw new Error(`Failed to delete (HTTP ${res.status})`);
+            // Redirect to original pack if possible, else home
+            if (pack.originalPack && typeof pack.originalPack.id === "number") {
+                router.push(`/packs/${pack.originalPack.id}`);
+            } else {
+                router.push("/");
+            }
+        } catch (err: any) {
+            setDeleteError(err.message || "Failed to delete pack.");
+        } finally {
+            setDeleting(false);
+        }
+    };
+
     return (
         <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 overflow-hidden pt-20 pb-20">
             <div className="absolute inset-0 pointer-events-none z-0">
@@ -99,6 +121,19 @@ export default function ConvertedPackDetailsPage() {
                     <DownloadUrl url={downloadUrl} />
                     <HashDisplay hash={hash} loading={hashLoading} />
                     <ServerPropertiesSnippet url={downloadUrl} hash={hash} />
+                    {/* Delete Button */}
+                    <div className="flex flex-col gap-2">
+                        <button
+                            onClick={handleDelete}
+                            disabled={deleting}
+                            className="w-full py-3 px-4 bg-red-600/90 hover:bg-red-700 text-white rounded-2xl text-sm font-medium flex items-center justify-center space-x-2 border border-red-700/40 transition-all duration-200 shadow-md shadow-red-500/10 z-10 relative group/delete-btn cursor-pointer"
+                        >
+                            {deleting ? "Deleting..." : "Delete Converted Pack"}
+                        </button>
+                        {deleteError && (
+                            <div className="text-red-600 text-sm text-center">{deleteError}</div>
+                        )}
+                    </div>
                     {(() => {
                         if (
                             pack.originalPack &&
