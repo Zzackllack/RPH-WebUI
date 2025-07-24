@@ -1,7 +1,7 @@
 package com.zacklack.zacklack.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Custom error controller to render a styled error page for /error.
@@ -57,12 +59,19 @@ public class CustomErrorController implements ErrorController {
             (String) msgObj;
 
         logger.warn(
-            "Custom error page: status={} error={} message={} path={}",
+        "Custom error page: status={} error={} message={} path={}",
             status,
             error,
             message,
             path
         );
+        // Smart logging: suggest possible causes for common error codes
+        switch (status) {
+            case 404 -> logger.info("Possible reason: The requested resource or endpoint does not exist. Check the URL or routing configuration.");
+            case 403 -> logger.info("Possible reason: Access forbidden. User may lack permissions, or resource is protected. Check security configuration and user roles.");
+            case 500 -> logger.info("Possible reason: Internal server error. This could be due to a bug, unhandled exception, or misconfiguration. Check application logs and stack trace for details.");
+            default -> logger.info("Error status {}: Investigate application logic, request parameters, and server configuration.", status);
+        }
 
         ModelAndView mav = new ModelAndView("error");
         mav.addObject("status", status);

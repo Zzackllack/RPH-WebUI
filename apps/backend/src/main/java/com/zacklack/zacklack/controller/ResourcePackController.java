@@ -61,6 +61,7 @@ public class ResourcePackController {
     @GetMapping
     public List<ResourcePack> getAllPacks() {
         logger.debug("Fetching all resource packs");
+        logger.info("If the result is empty, possible reasons: no resource packs have been uploaded, or database connection issues. Check DB status if unexpected.");
         return service.findAllOriginals();
     }
 
@@ -76,6 +77,8 @@ public class ResourcePackController {
         try {
             return ResponseEntity.ok(service.findById(id));
         } catch (RuntimeException e) {
+            logger.error("Failed to fetch resource pack with id={}: {}", id, e.getMessage(), e);
+            logger.info("Possible reason: Resource pack with the given ID does not exist, or there is a database connectivity issue. Verify the ID and DB status.");
             return ResponseEntity.notFound().build();
         }
     }
@@ -86,6 +89,7 @@ public class ResourcePackController {
     @GetMapping("/{id}/conversions")
     public List<ResourcePack> getConversions(@PathVariable Long id) {
         logger.debug("Fetching conversions for pack id={}", id);
+        logger.info("If no conversions are found, possible reasons: No conversions have been performed for this pack, or the pack ID is invalid.");
         return service.findConversions(id);
     }
 

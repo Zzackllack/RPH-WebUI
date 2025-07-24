@@ -30,9 +30,11 @@ public class RphBackendApplication {
         logger.info("OS: {} {} {}", osName, osVersion, osArch);
         if (osArch != null && osArch.toLowerCase().contains("arm")) {
             logger.warn("WARNING: ARM processor detected. This application is NOT tested or officially supported on ARM architectures.");
+            logger.info("Possible reason: ARM CPUs may have compatibility issues with native libraries or performance differences. Consider using x86_64 for production.");
         }
         if (osName != null && osName.toLowerCase().contains("windows")) {
             logger.warn("NOTE: This application is only tested and recommended to run on Linux servers, macOS, or Unix-like systems. Windows is not officially supported for production.");
+            logger.info("Possible reason: Windows environments may cause file path, permission, or process management issues. For best results, deploy on Linux or Unix-like OS.");
         }
         logger.info("Java Version: {}", System.getProperty("java.version"));
         logger.info("User: {}", System.getProperty("user.name"));
@@ -55,8 +57,10 @@ public class RphBackendApplication {
         logger.info("Current working directory files: {}", java.util.Arrays.toString(new java.io.File(System.getProperty("user.dir")).list()));
         try {
             logger.info("Network interfaces: {}", java.net.NetworkInterface.getNetworkInterfaces().hasMoreElements() ? "Available" : "None");
+            logger.info("If no network interfaces are available, check server network configuration or permissions. This may affect connectivity.");
         } catch (java.net.SocketException e) {
             logger.warn("Network interfaces: Unable to determine (SocketException: {})", e.getMessage());
+            logger.info("Possible reason: Insufficient permissions or network stack issues. Ensure the application has access to network resources.");
         }
         logger.info("Active JVM arguments: {}", java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments());
         logger.info("Uptime (ms): {}", java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime());

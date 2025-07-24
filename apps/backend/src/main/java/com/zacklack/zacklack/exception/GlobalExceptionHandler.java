@@ -1,8 +1,8 @@
 package com.zacklack.zacklack.exception;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.EOFException;
 import java.net.SocketException;
+
 import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Central exception handler for upload errors and other failures.
@@ -41,6 +43,7 @@ public class GlobalExceptionHandler {
             request.getRemoteAddr(),
             request.getHeader("User-Agent")
         );
+        logger.info("Possible reason: The uploaded ZIP may be missing required files (e.g., pack.mcmeta) or is corrupted. Advise user to check the resource pack structure.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
             ex.getMessage()
         );
@@ -61,6 +64,7 @@ public class GlobalExceptionHandler {
             request.getRemoteAddr(),
             request.getHeader("User-Agent")
         );
+        logger.info("Possible reason: The requested URL does not match any controller or static resource. Check for typos or missing endpoints.");
         ModelAndView mav = new ModelAndView("error");
         mav.setStatus(HttpStatus.NOT_FOUND);
         mav.addObject("status", 404);
@@ -92,6 +96,7 @@ public class GlobalExceptionHandler {
                 request.getRemoteAddr(),
                 request.getHeader("User-Agent")
             );
+            logger.info("Possible reason: User attempted to access a protected resource without sufficient permissions. Check security rules and authentication state.");
             ModelAndView mav = new ModelAndView("error");
             mav.setStatus(HttpStatus.FORBIDDEN);
             mav.addObject("status", 403);
@@ -122,6 +127,7 @@ public class GlobalExceptionHandler {
             request.getRemoteAddr(),
             request.getHeader("User-Agent")
         );
+        logger.info("Possible reason: User's network connection was interrupted or browser closed during upload. No server-side action required.");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
             "Client closed connection during upload"
         );
@@ -143,6 +149,7 @@ public class GlobalExceptionHandler {
             request.getRemoteAddr(),
             request.getHeader("User-Agent")
         );
+        logger.info("Possible reason: Client forcibly closed the connection (e.g., browser tab closed, network lost). Usually not a server issue.");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
             "Client aborted connection"
         );
@@ -164,6 +171,7 @@ public class GlobalExceptionHandler {
             request.getRemoteAddr(),
             request.getHeader("User-Agent")
         );
+        logger.info("Possible reason: Network socket was closed unexpectedly. Could be due to client disconnect, proxy timeout, or network instability.");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
             "Socket closed during upload"
         );
@@ -186,6 +194,7 @@ public class GlobalExceptionHandler {
             request.getHeader("User-Agent"),
             ex
         );
+        logger.info("Possible reason: Uploaded file exceeds the configured maximum size. Advise user to compress or split the file, or increase max upload size in server config.");
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(
             "File too large! Max allowed size: " + ex.getMaxUploadSize()
         );
@@ -209,6 +218,7 @@ public class GlobalExceptionHandler {
             request.getHeader("User-Agent"),
             ex
         );
+        logger.info("Possible reason: Unhandled exception in application logic. Check stack trace above for details. Common causes: null pointer, invalid input, misconfiguration, or third-party library errors.");
         // If the request expects HTML, return error page, else JSON/text
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("text/html")) {
