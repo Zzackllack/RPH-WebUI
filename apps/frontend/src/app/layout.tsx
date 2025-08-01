@@ -4,6 +4,9 @@ import { ThemeProvider } from "@/app/contexts/ThemeContext";
 import { ToastProvider } from "@/app/contexts/ToastContext";
 import { Footer } from "./components/layout/Footer";
 
+// Importing the TwentyFirstToolbar component from the 21st extension - AI toolbar for frontend development
+import { TwentyFirstToolbar } from "@21st-extension/toolbar-next";
+
 import "antd/dist/reset.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -26,9 +29,9 @@ export const viewport = {
 
 export default function RootLayout({
     children,
-}: {
+}: Readonly<{
     children: React.ReactNode;
-}) {
+}>) {
     return (
         <html lang="en" className="scroll-smooth">
             <head>
@@ -75,6 +78,11 @@ export default function RootLayout({
                 />
             </head>
             <body className={`${inter.className} antialiased`}>
+                <TwentyFirstToolbar
+                    config={{
+                        plugins: [],
+                    }}
+                />
                 <ThemeProvider>
                     <AuthProvider>
                         <ToastProvider>
